@@ -1,0 +1,444 @@
+// Schéma Prisma - Synkro
+// Développement local : SQLite (DATABASE_URL="file:./dev.db")
+// Production (Neon)   : changer provider → "postgresql" + décommenter directUrl
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ── DEV LOCAL (SQLite) ────────────────────────────────────────────────────────
+//datasource db {
+  //provider = "sqlite"
+  //url      = env("DATABASE_URL")
+//}
+
+// ── PRODUCTION (Neon PostgreSQL) — décommenter avant déploiement ──────────────
+ datasource db {
+   provider  = "postgresql"
+   url       = env("DATABASE_URL")   // URL poolée Neon (connection pooling)
+   directUrl = env("DIRECT_URL")     // URL directe Neon (pour migrations)
+}
+
+// ============================================
+// AUTHENTIFICATION (NextAuth.js)
+// ============================================
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  emailVerified DateTime?
+  name          String?
+  image         String?
+  passwordHash  String?
+
+  role          String    @default("USER") // SUPER_ADMIN, ADMIN, MANAGER, USER, ACCOUNTANT
+  isActive      Boolean   @default(true)
+  lastLoginAt   DateTime?
+
+  entrepriseId  String
+  entreprise    Entreprise @relation(fields: [entrepriseId], references: [id], onDelete: Cascade)
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts      Account[]
+  sessions      Session[]
+
+  @@index([entrepriseId])
+  @@index([email])
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// ============================================
+// ENTREPRISE & ABONNEMENT
+// ============================================
+
+model Entreprise {
+  id              String   @id @default(cuid())
+  name            String
+  slug            String   @unique
+  logo            String?
+  sector          String?  @default("AUTRE") // COMMERCE, SANTE, AUTRE
+
+  // Contact
+  email           String
+  phone           String?
+  address         String?
+  city            String?
+  postalCode      String?
+  country         String   @default("HT") // Haïti
+
+  // Configuration
+  currency        String   @default("HTG") // Gourde Haïtienne
+  secondaryCurrency String? @default("USD") // Dollar américain (optionnel)
+  timezone        String   @default("America/Port-au-Prince")
+  language        String   @default("fr")
+
+  // ABONNEMENT
+  subscriptionTier String @default("FREE") // FREE, STARTER, PROFESSIONAL, ENTERPRISE
+  subscriptionStatus String @default("TRIAL") // TRIAL, ACTIVE, PAST_DUE, CANCELLED, EXPIRED
+
+  // Features activées
+  aiEnabled       Boolean  @default(false)
+  advancedReports Boolean  @default(false)
+  multiUser       Boolean  @default(false)
+
+  maxUsers        Int      @default(1)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  users           User[]
+  sales           Sale[]
+  expenses        Expense[]
+  products        Product[]
+  productCategories ProductCategory[]
+  stockMovements  StockMovement[]
+  patients        Patient[]
+  consultations   Consultation[]
+  appointments    Appointment[]
+
+  @@index([slug])
+  @@map("entreprises")
+}
+
+// ============================================
+// FINANCE (Ventes & Dépenses) - CORE MVP
+// ============================================
+
+model Sale {
+  id              String   @id @default(cuid())
+
+  saleNumber      String   @unique // SALE-2025-001
+  customerName    String?
+
+  // Montants
+  subtotal        Float
+  taxAmount       Float    @default(0)
+  discount        Float    @default(0)
+  total           Float
+
+  // Paiement
+  paymentMethod   String   // CASH, CARD, BANK_TRANSFER, CHECK, MOBILE_PAYMENT, OTHER
+  paymentStatus   String   @default("PENDING") // PENDING, PAID, PARTIAL, OVERDUE, CANCELLED, REFUNDED
+  paidAmount      Float    @default(0)
+
+  // Dates
+  date            DateTime @default(now())
+  paidDate        DateTime?
+  notes           String?
+
+  entrepriseId    String
+  entreprise      Entreprise @relation(fields: [entrepriseId], references: [id], onDelete: Cascade)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  items           SaleItem[]
+
+  @@index([entrepriseId])
+  @@index([date])
+  @@index([paymentStatus])
+  @@map("sales")
+}
+
+model SaleItem {
+  id          String  @id @default(cuid())
+
+  saleId      String
+  sale        Sale    @relation(fields: [saleId], references: [id], onDelete: Cascade)
+
+  productId   String?
+  product     Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  name        String   // Nom du produit/service
+  description String?
+
+  quantity    Int
+  unitPrice   Float
+  taxRate     Float    @default(20.00)
+  total       Float
+
+  @@index([saleId])
+  @@index([productId])
+  @@map("sale_items")
+}
+
+model Expense {
+  id          String   @id @default(cuid())
+
+  description String
+  amount      Float
+  category    String   // RENT, SALARIES, SUPPLIES, UTILITIES, MARKETING, EQUIPMENT, INSURANCE, TAXES, TRANSPORT, MAINTENANCE, OTHER
+
+  // Paiement
+  paymentMethod String // CASH, CARD, BANK_TRANSFER, CHECK, etc.
+
+  // Dates
+  date        DateTime @default(now())
+
+  // Justificatif
+  receiptUrl  String?  // URL vers fichier
+  supplierName String?
+  notes       String?
+
+  entrepriseId String
+  entreprise   Entreprise @relation(fields: [entrepriseId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([entrepriseId])
+  @@index([date])
+  @@index([category])
+  @@map("expenses")
+}
+
+// ============================================
+// MODULE COMMERCE
+// ============================================
+
+model ProductCategory {
+  id              String    @id @default(cuid())
+  name            String
+  description     String?
+  color           String?   @default("#3B82F6") // For UI badges
+
+  entrepriseId    String
+  entreprise      Entreprise @relation(fields: [entrepriseId], references: [id], onDelete: Cascade)
+
+  products        Product[]
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([entrepriseId])
+  @@map("product_categories")
+}
+
+model Product {
+  id              String    @id @default(cuid())
+  productCode     String    // AUTO: PROD-YYYY-NNNN
+  name            String
+  description     String?
+
+  categoryId      String?
+  category        ProductCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  // Pricing
+  costPrice       Float     @default(0)    // Prix d'achat
+  sellingPrice    Float                     // Prix de vente
+  taxRate         Float     @default(0)
+
+  // Stock
+  currentStock    Int       @default(0)
+  minStockLevel   Int       @default(5)    // Alert threshold
+  unit            String    @default("pcs") // unité, kg, litre, etc.
+
+  // Metadata
+  sku             String?                   // Stock Keeping Unit (optional)
+  barcode         String?
+  imageUrl        String?
+  isActive        Boolean   @default(true)
+
+  entrepriseId    String
+  entreprise      Entreprise @relation(fields: [entrepriseId], references: [id], onDelete: Cascade)
+
+  stockMovements  StockMovement[]
+  saleItems       SaleItem[]
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@unique([entrepriseId, productCode])
+  @@index([entrepriseId])
+  @@index([categoryId])
+  @@map("products")
+}
+
+model StockMovement {
+  id              String    @id @default(cuid())
+
+  productId       String
+  product         Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  type            String    // IN, OUT, ADJUSTMENT
+  quantity        Int       // Positive or negative
+  previousStock   Int
+  newStock        Int
+
+  // Context
+  reason          String?                   // "Vente", "Achat", "Ajustement", "Retour", etc.
+  reference       String?                   // Sale ID, purchase ID, etc.
+  notes           String?
+
+  entrepriseId    String
+  entreprise      Entreprise @relation(fields: [entrepriseId], references: [id], onDelete: Cascade)
+
+  createdAt       DateTime  @default(now())
+
+  @@index([entrepriseId])
+  @@index([productId])
+  @@index([createdAt])
+  @@map("stock_movements")
+}
+
+// ============================================
+// MODULE SANTÉ
+// ============================================
+
+model Patient {
+  id              String    @id @default(cuid())
+  patientNumber   String    // AUTO: PAT-YYYY-NNNN
+
+  // Personal Info
+  firstName       String
+  lastName        String
+  dateOfBirth     DateTime?
+  gender          String?   // MALE, FEMALE, OTHER
+
+  // Contact
+  phone           String?
+  email           String?
+  address         String?
+  city            String?
+
+  // Medical
+  bloodType       String?
+  allergies       String?   // JSON or text list
+  chronicDiseases String?   // JSON or text list
+  emergencyContact String?
+  emergencyPhone  String?
+
+  // Insurance
+  insuranceProvider String?
+  insuranceNumber   String?
+
+  entrepriseId    String
+  entreprise      Entreprise @relation(fields: [entrepriseId], references: [id], onDelete: Cascade)
+
+  consultations   Consultation[]
+  appointments    Appointment[]
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@unique([entrepriseId, patientNumber])
+  @@index([entrepriseId])
+  @@index([lastName])
+  @@map("patients")
+}
+
+model Consultation {
+  id              String    @id @default(cuid())
+  consultationNumber String // AUTO: CONS-YYYY-NNNN
+
+  patientId       String
+  patient         Patient   @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  date            DateTime  @default(now())
+
+  // Clinical
+  chiefComplaint  String    // Motif de consultation
+  symptoms        String?   // Symptômes
+  diagnosis       String?   // Diagnostic
+  treatment       String?   // Traitement prescrit
+  notes           String?   // Notes du médecin
+
+  // Vital Signs
+  temperature     Float?
+  bloodPressure   String?   // e.g., "120/80"
+  heartRate       Int?
+  weight          Float?
+  height          Float?
+
+  // Billing
+  fee             Float     @default(0)
+  isPaid          Boolean   @default(false)
+
+  // Follow-up
+  nextAppointment DateTime?
+
+  entrepriseId    String
+  entreprise      Entreprise @relation(fields: [entrepriseId], references: [id], onDelete: Cascade)
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@unique([entrepriseId, consultationNumber])
+  @@index([entrepriseId])
+  @@index([patientId])
+  @@index([date])
+  @@map("consultations")
+}
+
+model Appointment {
+  id              String    @id @default(cuid())
+
+  patientId       String
+  patient         Patient   @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  scheduledAt     DateTime
+  duration        Int       @default(30) // minutes
+
+  type            String    // CONSULTATION, FOLLOW_UP, EMERGENCY, PROCEDURE
+  status          String    @default("SCHEDULED") // SCHEDULED, CONFIRMED, IN_PROGRESS, COMPLETED, CANCELLED, NO_SHOW
+
+  reason          String?
+  notes           String?
+
+  // Link to consultation if completed
+  consultationId  String?   @unique
+
+  entrepriseId    String
+  entreprise      Entreprise @relation(fields: [entrepriseId], references: [id], onDelete: Cascade)
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([entrepriseId])
+  @@index([patientId])
+  @@index([scheduledAt])
+  @@index([status])
+  @@map("appointments")
+}
