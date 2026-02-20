@@ -257,10 +257,7 @@ export default async function EditPatientPage({
             irréversible.
           </p>
           <DeleteButton
-            action={async () => {
-              "use server"
-              await deletePatient(patient.id)
-            }}
+            action={deletePatient.bind(null, patient.id)}
             itemName={`${patient.firstName} ${patient.lastName}`}
             itemType="patient"
           />

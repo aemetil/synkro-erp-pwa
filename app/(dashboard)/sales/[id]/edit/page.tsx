@@ -181,10 +181,7 @@ export default async function EditSalePage({ params }: { params: { id: string } 
           {/* Bouton de suppression */}
           <div className="mt-8 pt-8 border-t">
             <DeleteButton
-              action={async () => {
-                "use server"
-                await deleteSale(sale.id)
-              }}
+              action={deleteSale.bind(null, sale.id)}
               itemName={sale.saleNumber}
               itemType="vente"
             />

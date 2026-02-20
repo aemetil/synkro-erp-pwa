@@ -119,10 +119,7 @@ export default async function EditCategoryPage({
             simplement sans catégorie.
           </p>
           <DeleteButton
-            action={async () => {
-              "use server"
-              await deleteCategory(category.id)
-            }}
+            action={deleteCategory.bind(null, category.id)}
             itemName={category.name}
             itemType="catégorie"
           />

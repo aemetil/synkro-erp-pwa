@@ -167,10 +167,7 @@ export default async function EditExpensePage({ params }: { params: { id: string
           {/* Bouton de suppression */}
           <div className="mt-8 pt-8 border-t">
             <DeleteButton
-              action={async () => {
-                "use server"
-                await deleteExpense(expense.id)
-              }}
+              action={deleteExpense.bind(null, expense.id)}
               itemName={expense.description}
               itemType="dépense"
             />

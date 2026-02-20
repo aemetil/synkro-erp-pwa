@@ -292,10 +292,7 @@ export default async function EditProductPage({
                 listes mais les données historiques seront conservées.
               </p>
               <DeleteButton
-                action={async () => {
-                  "use server"
-                  await deleteProduct(product.id)
-                }}
+                action={deleteProduct.bind(null, product.id)}
                 itemName={product.name}
                 itemType="produit"
               />
