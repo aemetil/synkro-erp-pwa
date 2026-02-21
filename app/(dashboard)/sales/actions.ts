@@ -26,11 +26,12 @@ export async function createSale(formData: FormData) {
   const total = subtotal + taxAmount - discount
   const paidAmount = paymentStatus === "PAID" ? total : 0
 
-  // Générer le numéro de vente
+  // Générer le numéro de vente unique par entreprise
   const salesCount = await db.sale.count({
     where: { entrepriseId: session.user.entrepriseId },
   })
-  const saleNumber = `SALE-${new Date().getFullYear()}-${String(salesCount + 1).padStart(4, "0")}`
+  const companyTag = session.user.entrepriseId.slice(-6).toUpperCase()
+  const saleNumber = `SALE-${companyTag}-${new Date().getFullYear()}-${String(salesCount + 1).padStart(4, "0")}`
 
   // Créer la vente
   await db.sale.create({
@@ -84,11 +85,13 @@ export async function createSaleWithProducts(formData: FormData) {
     throw new Error("Aucun produit sélectionné")
   }
 
-  // Générer le numéro de vente
+  // Générer le numéro de vente unique par entreprise
+  // On inclut les 6 derniers chars de l'entrepriseId pour éviter les collisions entre entreprises
   const salesCount = await db.sale.count({
     where: { entrepriseId: session.user.entrepriseId },
   })
-  const saleNumber = `SALE-${new Date().getFullYear()}-${String(salesCount + 1).padStart(4, "0")}`
+  const companyTag = session.user.entrepriseId.slice(-6).toUpperCase()
+  const saleNumber = `SALE-${companyTag}-${new Date().getFullYear()}-${String(salesCount + 1).padStart(4, "0")}`
 
   // Calculer le total
   const subtotal = items.reduce(

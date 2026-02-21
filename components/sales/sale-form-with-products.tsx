@@ -1,11 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useTransition } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Plus, Trash2 } from "lucide-react"
+import { Plus, Trash2, Loader2 } from "lucide-react"
 
 type Product = {
   id: string
@@ -26,7 +26,7 @@ type SaleItem = {
 
 type Props = {
   products: Product[]
-  onSubmit: (data: FormData) => void
+  onSubmit: (data: FormData) => Promise<void>
 }
 
 export function SaleFormWithProducts({ products, onSubmit }: Props) {
@@ -35,6 +35,8 @@ export function SaleFormWithProducts({ products, onSubmit }: Props) {
   const [paymentMethod, setPaymentMethod] = useState("CASH")
   const [paymentStatus, setPaymentStatus] = useState("PAID")
   const [notes, setNotes] = useState("")
+  const [error, setError] = useState<string | null>(null)
+  const [isPending, startTransition] = useTransition()
 
   const addItem = () => {
     if (products.length === 0) return
@@ -87,16 +89,22 @@ export function SaleFormWithProducts({ products, onSubmit }: Props) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    setError(null)
 
     if (items.length === 0) {
-      alert("Veuillez ajouter au moins un produit")
+      setError("Veuillez ajouter au moins un produit")
+      return
+    }
+
+    if (!customerName.trim()) {
+      setError("Le nom du client est requis")
       return
     }
 
     // Check stock availability
     for (const item of items) {
       if (item.quantity > item.availableStock) {
-        alert(
+        setError(
           `Stock insuffisant pour ${item.productName}. Disponible: ${item.availableStock} ${item.unit}`
         )
         return
@@ -110,7 +118,17 @@ export function SaleFormWithProducts({ products, onSubmit }: Props) {
     formData.append("notes", notes)
     formData.append("items", JSON.stringify(items))
 
-    onSubmit(formData)
+    startTransition(async () => {
+      try {
+        await onSubmit(formData)
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message)
+        } else {
+          setError("Une erreur est survenue. Veuillez réessayer.")
+        }
+      }
+    })
   }
 
   return (
@@ -303,12 +321,26 @@ export function SaleFormWithProducts({ products, onSubmit }: Props) {
         </CardContent>
       </Card>
 
+      {/* Error message */}
+      {error && (
+        <div className="rounded-md bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-800">
+          {error}
+        </div>
+      )}
+
       {/* Submit Buttons */}
       <div className="flex gap-4">
-        <Button type="submit" className="flex-1" disabled={items.length === 0}>
-          Créer la vente
+        <Button type="submit" className="flex-1" disabled={items.length === 0 || isPending}>
+          {isPending ? (
+            <>
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              Création en cours...
+            </>
+          ) : (
+            "Créer la vente"
+          )}
         </Button>
-        <Button type="button" variant="outline" className="flex-1">
+        <Button type="button" variant="outline" className="flex-1" disabled={isPending}>
           Annuler
         </Button>
       </div>

@@ -18,16 +18,16 @@ Synkro est une application SaaS multi-tenant qui centralise la gestion financiè
 
 ## Stack technique
 
-| Couche | Technologie |
-|--------|-------------|
-| Framework | Next.js 14 (App Router) |
-| Langage | TypeScript (strict) |
-| UI | Tailwind CSS + shadcn/ui |
-| Auth | NextAuth v5 (JWT) |
-| ORM | Prisma |
-| DB | SQLite (dev) / PostgreSQL (prod) |
-| Hosting | Vercel |
-| Database | Supabase |
+| Couche    | Technologie                      |
+| --------- | -------------------------------- |
+| Framework | Next.js 14 (App Router)          |
+| Langage   | TypeScript (strict)              |
+| UI        | Tailwind CSS + shadcn/ui         |
+| Auth      | NextAuth v5 (JWT)                |
+| ORM       | Prisma                           |
+| DB        | SQLite (dev) / PostgreSQL (prod) |
+| Hosting   | Vercel                           |
+| Database  | Neon                             |
 
 ## Démarrage rapide
 

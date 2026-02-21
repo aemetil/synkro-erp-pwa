@@ -80,84 +80,65 @@ export default async function ProductsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Produits</h1>
-          <p className="text-gray-600">Gérez votre catalogue de produits</p>
+          <h1 className="text-xl md:text-3xl font-bold">Produits</h1>
+          <p className="text-xs md:text-base text-gray-600">Gérez votre catalogue de produits</p>
         </div>
-        <div className="flex gap-2">
-          <Button asChild>
-            <Link href="/commerce/products/new">
-              <Plus className="h-4 w-4 mr-2" />
-              Nouveau produit
-            </Link>
-          </Button>
-        </div>
+        <Button asChild size="sm">
+          <Link href="/commerce/products/new">
+            <Plus className="h-4 w-4 md:mr-2" />
+            <span className="hidden md:inline">Nouveau produit</span>
+          </Link>
+        </Button>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 md:gap-6">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">
-              Total produits
-            </CardTitle>
-            <Package className="h-4 w-4 text-blue-600" />
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 pt-3 px-3 md:p-6 md:pb-2">
+            <CardTitle className="text-xs font-medium text-gray-600">Total produits</CardTitle>
+            <Package className="h-3 w-3 md:h-4 md:w-4 text-blue-600" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totalProducts}</div>
-            <p className="text-xs text-gray-500 mt-1">
-              {categories.length} catégories
-            </p>
+          <CardContent className="px-3 pb-3 md:px-6 md:pb-4">
+            <div className="text-lg md:text-2xl font-bold">{totalProducts}</div>
+            <p className="text-xs text-gray-500 mt-0.5">{categories.length} catégories</p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">
-              Stock bas
-            </CardTitle>
-            <Package className="h-4 w-4 text-yellow-600" />
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 pt-3 px-3 md:p-6 md:pb-2">
+            <CardTitle className="text-xs font-medium text-gray-600">Stock bas</CardTitle>
+            <Package className="h-3 w-3 md:h-4 md:w-4 text-yellow-600" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{lowStockCount}</div>
-            <p className="text-xs text-gray-500 mt-1">
-              Produits sous le seuil
-            </p>
+          <CardContent className="px-3 pb-3 md:px-6 md:pb-4">
+            <div className="text-lg md:text-2xl font-bold">{lowStockCount}</div>
+            <p className="text-xs text-gray-500 mt-0.5">Sous le seuil</p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">
-              Rupture
-            </CardTitle>
-            <Package className="h-4 w-4 text-red-600" />
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 pt-3 px-3 md:p-6 md:pb-2">
+            <CardTitle className="text-xs font-medium text-gray-600">Rupture</CardTitle>
+            <Package className="h-3 w-3 md:h-4 md:w-4 text-red-600" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{outOfStockCount}</div>
-            <p className="text-xs text-gray-500 mt-1">
-              Produits en rupture
-            </p>
+          <CardContent className="px-3 pb-3 md:px-6 md:pb-4">
+            <div className="text-lg md:text-2xl font-bold">{outOfStockCount}</div>
+            <p className="text-xs text-gray-500 mt-0.5">En rupture</p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">
-              Valeur stock
-            </CardTitle>
-            <Package className="h-4 w-4 text-green-600" />
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 pt-3 px-3 md:p-6 md:pb-2">
+            <CardTitle className="text-xs font-medium text-gray-600">Valeur stock</CardTitle>
+            <Package className="h-3 w-3 md:h-4 md:w-4 text-green-600" />
           </CardHeader>
-          <CardContent>
-            <div className="text-lg md:text-2xl font-bold break-words">
+          <CardContent className="px-3 pb-3 md:px-6 md:pb-4">
+            <div className="text-sm md:text-2xl font-bold break-all">
               <CurrencyAmount amount={totalStockValue} />
             </div>
-            <p className="text-xs text-gray-500 mt-1">
-              Valeur totale
-            </p>
           </CardContent>
         </Card>
       </div>
@@ -190,14 +171,14 @@ export default async function ProductsPage() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="border-b">
-                  <tr className="text-left text-sm text-gray-600">
-                    <th className="pb-3 font-medium">Code</th>
-                    <th className="pb-3 font-medium">Nom</th>
-                    <th className="pb-3 font-medium">Catégorie</th>
-                    <th className="pb-3 font-medium">Prix</th>
-                    <th className="pb-3 font-medium">Stock</th>
-                    <th className="pb-3 font-medium">Statut</th>
-                    <th className="pb-3 font-medium text-right">Actions</th>
+                  <tr className="text-left text-xs md:text-sm text-gray-600">
+                    <th className="pb-2 md:pb-3 font-medium hidden md:table-cell">Code</th>
+                    <th className="pb-2 md:pb-3 font-medium">Nom</th>
+                    <th className="pb-2 md:pb-3 font-medium hidden md:table-cell">Catégorie</th>
+                    <th className="pb-2 md:pb-3 font-medium">Prix</th>
+                    <th className="pb-2 md:pb-3 font-medium">Stock</th>
+                    <th className="pb-2 md:pb-3 font-medium">Statut</th>
+                    <th className="pb-2 md:pb-3 font-medium text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -206,63 +187,50 @@ export default async function ProductsPage() {
                       key={product.id}
                       className="border-b last:border-0 hover:bg-gray-50"
                     >
-                      <td className="py-4 text-sm font-medium">
+                      <td className="py-2.5 md:py-4 text-xs md:text-sm font-medium hidden md:table-cell">
                         {product.productCode}
                       </td>
-                      <td className="py-4">
-                        <div>
-                          <div className="font-medium">{product.name}</div>
-                          {product.description && (
-                            <div className="text-sm text-gray-500 truncate max-w-xs">
-                              {product.description}
-                            </div>
-                          )}
+                      <td className="py-2.5 md:py-4">
+                        <div className="font-medium text-xs md:text-sm truncate max-w-[120px] md:max-w-xs">
+                          {product.name}
+                        </div>
+                        <div className="text-xs text-gray-500 hidden md:block">
+                          {product.productCode}
                         </div>
                       </td>
-                      <td className="py-4">
+                      <td className="py-2.5 md:py-4 hidden md:table-cell">
                         {product.category ? (
                           <span
                             className="px-2 py-1 text-xs font-medium rounded"
                             style={{
-                              backgroundColor: `${product.category.color || '#gray'}20`,
-                              color: product.category.color || '#gray',
+                              backgroundColor: `${product.category.color || '#6b7280'}20`,
+                              color: product.category.color || '#6b7280',
                             }}
                           >
                             {product.category.name}
                           </span>
                         ) : (
-                          <span className="text-sm text-gray-400">
-                            Sans catégorie
-                          </span>
+                          <span className="text-xs text-gray-400">—</span>
                         )}
                       </td>
-                      <td className="py-4 text-sm">
+                      <td className="py-2.5 md:py-4 text-xs md:text-sm">
                         <CurrencyAmount amount={product.sellingPrice} />
                       </td>
-                      <td className="py-4 text-sm">
-                        <div>
-                          <div className="font-medium">
-                            {product.currentStock} {product.unit}
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            Min: {product.minStockLevel}
-                          </div>
+                      <td className="py-2.5 md:py-4 text-xs md:text-sm">
+                        <div className="font-medium">
+                          {product.currentStock} <span className="text-gray-500">{product.unit}</span>
+                        </div>
+                        <div className="text-xs text-gray-400 hidden md:block">
+                          Min: {product.minStockLevel}
                         </div>
                       </td>
-                      <td className="py-4">
-                        {getStockBadge(
-                          product.currentStock,
-                          product.minStockLevel
-                        )}
+                      <td className="py-2.5 md:py-4">
+                        {getStockBadge(product.currentStock, product.minStockLevel)}
                       </td>
-                      <td className="py-4 text-right">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          asChild
-                        >
+                      <td className="py-2.5 md:py-4 text-right">
+                        <Button variant="ghost" size="sm" asChild className="h-7 w-7 p-0 md:h-9 md:w-9">
                           <Link href={`/commerce/products/${product.id}/edit`}>
-                            <Pencil className="h-4 w-4" />
+                            <Pencil className="h-3 w-3 md:h-4 md:w-4" />
                           </Link>
                         </Button>
                       </td>
