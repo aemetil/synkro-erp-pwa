@@ -2,18 +2,21 @@
 import { auth } from "@/lib/auth"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { db } from "@/lib/db"
-import { formatCurrency } from "@/lib/utils"
 import { CurrencyAmount } from "@/components/currency-amount"
 import { Button } from "@/components/ui/button"
-import { Plus, Search, Pencil } from "lucide-react"
+import { Plus, Pencil } from "lucide-react"
 import Link from "next/link"
+
+const STATUS_LABEL: Record<string, { label: string; short: string; color: string }> = {
+  PAID:    { label: "Payé",       short: "Payé",    color: "bg-green-100 text-green-800" },
+  PENDING: { label: "En attente", short: "Attente", color: "bg-yellow-100 text-yellow-800" },
+  PARTIAL: { label: "Partiel",    short: "Partiel", color: "bg-orange-100 text-orange-800" },
+  OVERDUE: { label: "En retard",  short: "Retard",  color: "bg-red-100 text-red-800" },
+}
 
 export default async function SalesPage() {
   const session = await auth()
-
-  if (!session?.user?.entrepriseId) {
-    return <div>Erreur: Entreprise non trouvée</div>
-  }
+  if (!session?.user?.entrepriseId) return <div>Erreur: Entreprise non trouvée</div>
 
   const sales = await db.sale.findMany({
     where: { entrepriseId: session.user.entrepriseId },
@@ -22,158 +25,120 @@ export default async function SalesPage() {
 
   const stats = await db.sale.aggregate({
     where: { entrepriseId: session.user.entrepriseId },
-    _sum: {
-      total: true,
-      paidAmount: true,
-    },
+    _sum: { total: true, paidAmount: true },
     _count: true,
   })
 
+  const unpaid = (stats._sum.total || 0) - (stats._sum.paidAmount || 0)
+
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-4 md:mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Ventes</h1>
-          <p className="text-gray-600 mt-2">
-            Gérez toutes vos ventes et factures
-          </p>
+          <h1 className="text-xl md:text-3xl font-bold text-gray-900">Ventes</h1>
+          <p className="text-xs md:text-base text-gray-600 mt-1 md:mt-2">Gérez toutes vos ventes et factures</p>
         </div>
         <Link href="/sales/new">
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            Nouvelle vente
+          <Button size="sm">
+            <Plus className="h-4 w-4" />
+            <span className="hidden md:inline ml-2">Nouvelle vente</span>
           </Button>
         </Link>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-3 gap-2 md:gap-6 mb-4 md:mb-8">
         <Card>
-          <CardHeader>
-            <CardTitle className="text-sm font-medium text-gray-600">
-              Total des ventes
-            </CardTitle>
+          <CardHeader className="pb-1 pt-3 px-3 md:p-6 md:pb-2">
+            <CardTitle className="text-xs font-medium text-gray-600 leading-tight">Total ventes</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="text-lg md:text-2xl font-bold break-words">
-              <CurrencyAmount amount={stats._sum.total || 0} />
-            </div>
-            <p className="text-xs text-gray-500 mt-1">
-              {stats._count} vente{stats._count > 1 ? "s" : ""} au total
-            </p>
+          <CardContent className="px-3 pb-3 md:px-6 md:pb-4">
+            <div className="text-sm md:text-2xl font-bold break-all"><CurrencyAmount amount={stats._sum.total || 0} /></div>
+            <p className="text-xs text-gray-500 mt-0.5 hidden md:block">{stats._count} vente{stats._count > 1 ? "s" : ""}</p>
           </CardContent>
         </Card>
-
         <Card>
-          <CardHeader>
-            <CardTitle className="text-sm font-medium text-gray-600">
-              Montant payé
-            </CardTitle>
+          <CardHeader className="pb-1 pt-3 px-3 md:p-6 md:pb-2">
+            <CardTitle className="text-xs font-medium text-gray-600 leading-tight">Encaissé</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="text-lg md:text-2xl font-bold text-green-600 break-words">
-              <CurrencyAmount amount={stats._sum.paidAmount || 0} />
-            </div>
-            <p className="text-xs text-gray-500 mt-1">
-              Encaissé
-            </p>
+          <CardContent className="px-3 pb-3 md:px-6 md:pb-4">
+            <div className="text-sm md:text-2xl font-bold text-green-600 break-all"><CurrencyAmount amount={stats._sum.paidAmount || 0} /></div>
+            <p className="text-xs text-gray-500 mt-0.5 hidden md:block">Payé</p>
           </CardContent>
         </Card>
-
         <Card>
-          <CardHeader>
-            <CardTitle className="text-sm font-medium text-gray-600">
-              Impayés
-            </CardTitle>
+          <CardHeader className="pb-1 pt-3 px-3 md:p-6 md:pb-2">
+            <CardTitle className="text-xs font-medium text-gray-600 leading-tight">Impayés</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="text-lg md:text-2xl font-bold text-red-600 break-words">
-              <CurrencyAmount amount={(stats._sum.total || 0) - (stats._sum.paidAmount || 0)} />
-            </div>
-            <p className="text-xs text-gray-500 mt-1">
-              En attente
-            </p>
+          <CardContent className="px-3 pb-3 md:px-6 md:pb-4">
+            <div className="text-sm md:text-2xl font-bold text-red-600 break-all"><CurrencyAmount amount={unpaid} /></div>
+            <p className="text-xs text-gray-500 mt-0.5 hidden md:block">En attente</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Sales Table */}
       <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle>Liste des ventes</CardTitle>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm">
-                <Search className="h-4 w-4 mr-2" />
-                Rechercher
-              </Button>
-            </div>
-          </div>
+        <CardHeader className="py-3 px-4 md:p-6">
+          <CardTitle className="text-base md:text-lg">Liste des ventes</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0 md:px-6 md:pb-6">
           {sales.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-gray-500 mb-4">Aucune vente enregistrée</p>
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                Créer votre première vente
-              </Button>
+              <Link href="/sales/new">
+                <Button><Plus className="h-4 w-4 mr-2" />Créer votre première vente</Button>
+              </Link>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="border-b">
-                  <tr className="text-left text-sm text-gray-600">
-                    <th className="pb-3 font-medium">Numéro</th>
-                    <th className="pb-3 font-medium">Client</th>
-                    <th className="pb-3 font-medium">Date</th>
-                    <th className="pb-3 font-medium">Montant</th>
-                    <th className="pb-3 font-medium">Payé</th>
-                    <th className="pb-3 font-medium">Statut</th>
-                    <th className="pb-3 font-medium">Paiement</th>
-                    <th className="pb-3 font-medium">Actions</th>
+                <thead className="border-b bg-gray-50">
+                  <tr className="text-left">
+                    <th className="py-2 px-3 md:py-3 md:px-0 text-xs font-medium text-gray-500 uppercase tracking-wide">N°</th>
+                    <th className="py-2 px-3 md:py-3 md:px-2 text-xs font-medium text-gray-500 uppercase tracking-wide">Client</th>
+                    <th className="py-2 px-3 md:py-3 md:px-2 text-xs font-medium text-gray-500 uppercase tracking-wide hidden md:table-cell">Date</th>
+                    <th className="py-2 px-3 md:py-3 md:px-2 text-xs font-medium text-gray-500 uppercase tracking-wide">Montant</th>
+                    <th className="py-2 px-3 md:py-3 md:px-2 text-xs font-medium text-gray-500 uppercase tracking-wide hidden md:table-cell">Payé</th>
+                    <th className="py-2 px-3 md:py-3 md:px-2 text-xs font-medium text-gray-500 uppercase tracking-wide">Statut</th>
+                    <th className="py-2 px-3 md:py-3 md:px-2 text-xs font-medium text-gray-500 uppercase tracking-wide hidden md:table-cell">Paiement</th>
+                    <th className="py-2 px-3 md:py-3 md:px-2 text-xs font-medium text-gray-500 uppercase tracking-wide"></th>
                   </tr>
                 </thead>
-                <tbody>
-                  {sales.map((sale) => (
-                    <tr key={sale.id} className="border-b last:border-0 hover:bg-gray-50">
-                      <td className="py-4 text-sm font-medium">{sale.saleNumber}</td>
-                      <td className="py-4 text-sm">{sale.customerName || "-"}</td>
-                      <td className="py-4 text-sm text-gray-600">
-                        {new Date(sale.date).toLocaleDateString("fr-FR")}
-                      </td>
-                      <td className="py-4 text-sm font-semibold">
-                        <CurrencyAmount amount={sale.total} />
-                      </td>
-                      <td className="py-4 text-sm text-green-600">
-                        <CurrencyAmount amount={sale.paidAmount} />
-                      </td>
-                      <td className="py-4">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          sale.paymentStatus === "PAID" ? "bg-green-100 text-green-800" :
-                          sale.paymentStatus === "PENDING" ? "bg-yellow-100 text-yellow-800" :
-                          sale.paymentStatus === "PARTIAL" ? "bg-orange-100 text-orange-800" :
-                          sale.paymentStatus === "OVERDUE" ? "bg-red-100 text-red-800" :
-                          "bg-gray-100 text-gray-800"
-                        }`}>
-                          {sale.paymentStatus === "PAID" ? "Payé" :
-                           sale.paymentStatus === "PENDING" ? "En attente" :
-                           sale.paymentStatus === "PARTIAL" ? "Partiel" :
-                           sale.paymentStatus === "OVERDUE" ? "En retard" :
-                           sale.paymentStatus}
-                        </span>
-                      </td>
-                      <td className="py-4 text-sm text-gray-600">{sale.paymentMethod}</td>
-                      <td className="py-4">
-                        <Link href={`/sales/${sale.id}/edit`}>
-                          <Button variant="outline" size="sm">
-                            <Pencil className="h-4 w-4 mr-1" />
-                            Modifier
-                          </Button>
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
+                <tbody className="divide-y divide-gray-100">
+                  {sales.map((sale) => {
+                    const status = STATUS_LABEL[sale.paymentStatus] ?? { label: sale.paymentStatus, short: sale.paymentStatus, color: "bg-gray-100 text-gray-800" }
+                    return (
+                      <tr key={sale.id} className="hover:bg-gray-50">
+                        <td className="py-2.5 px-3 md:py-4 md:px-0 text-xs md:text-sm font-medium whitespace-nowrap">{sale.saleNumber}</td>
+                        <td className="py-2.5 px-3 md:py-4 md:px-2 text-xs md:text-sm">
+                          <span className="block max-w-[70px] md:max-w-none truncate">{sale.customerName || "-"}</span>
+                        </td>
+                        <td className="py-2.5 px-3 md:py-4 md:px-2 text-xs md:text-sm text-gray-600 hidden md:table-cell whitespace-nowrap">
+                          {new Date(sale.date).toLocaleDateString("fr-FR")}
+                        </td>
+                        <td className="py-2.5 px-3 md:py-4 md:px-2 text-xs md:text-sm font-semibold whitespace-nowrap">
+                          <CurrencyAmount amount={sale.total} />
+                        </td>
+                        <td className="py-2.5 px-3 md:py-4 md:px-2 text-xs md:text-sm text-green-600 hidden md:table-cell whitespace-nowrap">
+                          <CurrencyAmount amount={sale.paidAmount} />
+                        </td>
+                        <td className="py-2.5 px-3 md:py-4 md:px-2">
+                          <span className={`inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium ${status.color}`}>
+                            <span className="md:hidden">{status.short}</span>
+                            <span className="hidden md:inline">{status.label}</span>
+                          </span>
+                        </td>
+                        <td className="py-2.5 px-3 md:py-4 md:px-2 text-xs md:text-sm text-gray-600 hidden md:table-cell">{sale.paymentMethod}</td>
+                        <td className="py-2.5 px-3 md:py-4 md:px-2">
+                          <Link href={`/sales/${sale.id}/edit`}>
+                            <Button variant="outline" size="sm" className="h-7 w-7 p-0 md:h-9 md:w-auto md:px-3">
+                              <Pencil className="h-3.5 w-3.5" />
+                              <span className="hidden md:inline ml-1">Modifier</span>
+                            </Button>
+                          </Link>
+                        </td>
+                      </tr>
+                    )
+                  })}
                 </tbody>
               </table>
             </div>

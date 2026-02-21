@@ -2,182 +2,129 @@
 import { auth } from "@/lib/auth"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { db } from "@/lib/db"
-import { formatCurrency } from "@/lib/utils"
 import { CurrencyAmount } from "@/components/currency-amount"
 import { Button } from "@/components/ui/button"
-import { Plus, Search, Users } from "lucide-react"
+import { Plus, Users } from "lucide-react"
+
+const fmt = (d: Date) => new Date(d).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" })
 
 export default async function CustomersPage() {
   const session = await auth()
+  if (!session?.user?.entrepriseId) return <div>Erreur: Entreprise non trouvée</div>
 
-  if (!session?.user?.entrepriseId) {
-    return <div>Erreur: Entreprise non trouvée</div>
-  }
-
-  // Get unique customers from sales
   const sales = await db.sale.findMany({
-    where: {
-      entrepriseId: session.user.entrepriseId,
-      customerName: { not: null },
-    },
-    select: {
-      customerName: true,
-      total: true,
-      date: true,
-    },
+    where: { entrepriseId: session.user.entrepriseId, customerName: { not: null } },
+    select: { customerName: true, total: true, date: true },
   })
 
-  // Group by customer
   const customerMap = new Map<string, { name: string; totalSales: number; salesCount: number; lastSale: Date }>()
-
   sales.forEach(sale => {
     if (sale.customerName) {
       const existing = customerMap.get(sale.customerName)
       if (existing) {
         existing.totalSales += sale.total
         existing.salesCount += 1
-        if (sale.date > existing.lastSale) {
-          existing.lastSale = sale.date
-        }
+        if (sale.date > existing.lastSale) existing.lastSale = sale.date
       } else {
-        customerMap.set(sale.customerName, {
-          name: sale.customerName,
-          totalSales: sale.total,
-          salesCount: 1,
-          lastSale: sale.date,
-        })
+        customerMap.set(sale.customerName, { name: sale.customerName, totalSales: sale.total, salesCount: 1, lastSale: sale.date })
       }
     }
   })
 
   const customers = Array.from(customerMap.values()).sort((a, b) => b.totalSales - a.totalSales)
+  const totalRevenue = customers.reduce((sum, c) => sum + c.totalSales, 0)
+  const avgRevenue = customers.length > 0 ? totalRevenue / customers.length : 0
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-4 md:mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Clients</h1>
-          <p className="text-gray-600 mt-2">
-            Gérez vos clients et suivez leur historique
-          </p>
+          <h1 className="text-xl md:text-3xl font-bold text-gray-900">Clients</h1>
+          <p className="text-xs md:text-base text-gray-600 mt-1 md:mt-2">Gérez vos clients et suivez leur historique</p>
         </div>
-        <Button disabled title="Les clients sont créés automatiquement depuis les ventes">
-          <Plus className="h-4 w-4 mr-2" />
-          Nouveau client
+        <Button size="sm" disabled title="Les clients sont créés automatiquement depuis les ventes">
+          <Plus className="h-4 w-4" />
+          <span className="hidden md:inline ml-2">Nouveau client</span>
         </Button>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-3 gap-2 md:gap-6 mb-4 md:mb-8">
         <Card>
-          <CardHeader>
-            <CardTitle className="text-sm font-medium text-gray-600">
-              Total clients
-            </CardTitle>
+          <CardHeader className="pb-1 pt-3 px-3 md:p-6 md:pb-2">
+            <CardTitle className="text-xs font-medium text-gray-600 leading-tight">Clients</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{customers.length}</div>
-            <p className="text-xs text-gray-500 mt-1">
-              Clients actifs
-            </p>
+          <CardContent className="px-3 pb-3 md:px-6 md:pb-4">
+            <div className="text-xl md:text-2xl font-bold">{customers.length}</div>
+            <p className="text-xs text-gray-500 mt-0.5 hidden md:block">Actifs</p>
           </CardContent>
         </Card>
-
         <Card>
-          <CardHeader>
-            <CardTitle className="text-sm font-medium text-gray-600">
-              Chiffre d'affaires moyen
-            </CardTitle>
+          <CardHeader className="pb-1 pt-3 px-3 md:p-6 md:pb-2">
+            <CardTitle className="text-xs font-medium text-gray-600 leading-tight">Moy./client</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="text-lg md:text-2xl font-bold text-green-600 break-words">
-              <CurrencyAmount amount={customers.length > 0
-                ? customers.reduce((sum, c) => sum + c.totalSales, 0) / customers.length
-                : 0} />
+          <CardContent className="px-3 pb-3 md:px-6 md:pb-4">
+            <div className="text-sm md:text-2xl font-bold text-green-600 break-all">
+              <CurrencyAmount amount={avgRevenue} />
             </div>
-            <p className="text-xs text-gray-500 mt-1">
-              Par client
-            </p>
           </CardContent>
         </Card>
-
         <Card>
-          <CardHeader>
-            <CardTitle className="text-sm font-medium text-gray-600">
-              Ventes totales
-            </CardTitle>
+          <CardHeader className="pb-1 pt-3 px-3 md:p-6 md:pb-2">
+            <CardTitle className="text-xs font-medium text-gray-600 leading-tight">Total CA</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="text-lg md:text-2xl font-bold text-purple-600 break-words">
-              <CurrencyAmount amount={customers.reduce((sum, c) => sum + c.totalSales, 0)} />
+          <CardContent className="px-3 pb-3 md:px-6 md:pb-4">
+            <div className="text-sm md:text-2xl font-bold text-purple-600 break-all">
+              <CurrencyAmount amount={totalRevenue} />
             </div>
-            <p className="text-xs text-gray-500 mt-1">
-              Tous les clients
-            </p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Customers List */}
       <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle>Liste des clients</CardTitle>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm">
-                <Search className="h-4 w-4 mr-2" />
-                Rechercher
-              </Button>
-            </div>
-          </div>
+        <CardHeader className="py-3 px-4 md:p-6">
+          <CardTitle className="text-base md:text-lg">Liste des clients</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0 md:px-6 md:pb-6">
           {customers.length === 0 ? (
             <div className="text-center py-12">
               <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-500 mb-4">Aucun client enregistré</p>
-              <p className="text-sm text-gray-400 mb-4">
-                Les clients apparaîtront automatiquement lorsque vous créerez des ventes avec un nom de client
-              </p>
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                Créer une vente
-              </Button>
+              <p className="text-sm text-gray-400 mb-4">Les clients apparaîtront automatiquement via les ventes</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="border-b">
-                  <tr className="text-left text-sm text-gray-600">
-                    <th className="pb-3 font-medium">Nom du client</th>
-                    <th className="pb-3 font-medium">Nombre de ventes</th>
-                    <th className="pb-3 font-medium">Chiffre d'affaires</th>
-                    <th className="pb-3 font-medium">Dernière vente</th>
+                <thead className="border-b bg-gray-50">
+                  <tr className="text-left">
+                    <th className="py-2 px-3 md:py-3 md:px-0 text-xs font-medium text-gray-500 uppercase tracking-wide">Nom</th>
+                    <th className="py-2 px-3 md:py-3 md:px-2 text-xs font-medium text-gray-500 uppercase tracking-wide hidden md:table-cell">Ventes</th>
+                    <th className="py-2 px-3 md:py-3 md:px-2 text-xs font-medium text-gray-500 uppercase tracking-wide">CA</th>
+                    <th className="py-2 px-3 md:py-3 md:px-2 text-xs font-medium text-gray-500 uppercase tracking-wide hidden md:table-cell">Dernière vente</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-gray-100">
                   {customers.map((customer, index) => (
-                    <tr key={index} className="border-b last:border-0 hover:bg-gray-50">
-                      <td className="py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                            <span className="text-sm font-medium text-blue-600">
+                    <tr key={index} className="hover:bg-gray-50">
+                      <td className="py-2.5 px-3 md:py-4 md:px-0">
+                        <div className="flex items-center gap-2 md:gap-3">
+                          <div className="h-7 w-7 md:h-10 md:w-10 rounded-full bg-blue-100 flex-shrink-0 flex items-center justify-center">
+                            <span className="text-xs font-medium text-blue-600">
                               {customer.name.substring(0, 2).toUpperCase()}
                             </span>
                           </div>
-                          <div>
-                            <p className="text-sm font-medium">{customer.name}</p>
-                          </div>
+                          <span className="text-xs md:text-sm font-medium block max-w-[80px] md:max-w-none truncate">
+                            {customer.name}
+                          </span>
                         </div>
                       </td>
-                      <td className="py-4 text-sm text-gray-600">
+                      <td className="py-2.5 px-3 md:py-4 md:px-2 text-xs md:text-sm text-gray-600 hidden md:table-cell">
                         {customer.salesCount} vente{customer.salesCount > 1 ? "s" : ""}
                       </td>
-                      <td className="py-4 text-sm font-semibold text-green-600">
+                      <td className="py-2.5 px-3 md:py-4 md:px-2 text-xs md:text-sm font-semibold text-green-600 whitespace-nowrap">
                         <CurrencyAmount amount={customer.totalSales} />
                       </td>
-                      <td className="py-4 text-sm text-gray-600">
-                        {new Date(customer.lastSale).toLocaleDateString("fr-FR")}
+                      <td className="py-2.5 px-3 md:py-4 md:px-2 text-xs md:text-sm text-gray-600 hidden md:table-cell whitespace-nowrap">
+                        {fmt(customer.lastSale)}
                       </td>
                     </tr>
                   ))}

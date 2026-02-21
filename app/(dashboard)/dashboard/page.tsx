@@ -196,19 +196,19 @@ export default async function DashboardPage() {
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">
+      <div className="mb-4 md:mb-8">
+        <h1 className="text-xl md:text-3xl font-bold text-gray-900">
           Tableau de bord
-          {sector && <span className="text-sm text-gray-500 ml-3">({sector === "COMMERCE" ? "Commerce" : sector === "SANTE" ? "Santé" : "Mixte"})</span>}
+          {sector && <span className="text-xs md:text-sm text-gray-500 ml-2">({sector === "COMMERCE" ? "Commerce" : sector === "SANTE" ? "Santé" : "Mixte"})</span>}
         </h1>
-        <p className="text-gray-600 mt-2">
+        <p className="text-xs md:text-base text-gray-600 mt-1 md:mt-2">
           Bienvenue, {session?.user?.name || session?.user?.email}
         </p>
       </div>
 
       {/* Stats Cards - COMMERCE */}
       {stats.type === "COMMERCE" && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 md:gap-6 mb-4 md:mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-gray-600">
@@ -277,7 +277,7 @@ export default async function DashboardPage() {
 
       {/* Stats Cards - SANTE */}
       {stats.type === "SANTE" && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 md:gap-6 mb-4 md:mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-gray-600">
@@ -348,7 +348,7 @@ export default async function DashboardPage() {
 
       {/* Stats Cards - AUTRE (Mixte) */}
       {stats.type === "AUTRE" && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 md:gap-6 mb-4 md:mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-gray-600">

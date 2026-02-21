@@ -314,27 +314,27 @@ export default async function FinancePage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-4 md:mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">
-            Finance {sector === "COMMERCE" ? "(Commerce)" : sector === "SANTE" ? "(Santé)" : "(Mixte)"}
+          <h1 className="text-xl md:text-3xl font-bold text-gray-900">
+            Finance <span className="text-xs md:text-sm text-gray-500">({sector === "COMMERCE" ? "Commerce" : sector === "SANTE" ? "Santé" : "Mixte"})</span>
           </h1>
-          <p className="text-gray-600 mt-2">
+          <p className="text-xs md:text-base text-gray-600 mt-1 md:mt-2">
             {sector === "COMMERCE"
-              ? "Gérez vos ventes, dépenses et suivez votre trésorerie"
+              ? "Ventes, dépenses et trésorerie"
               : sector === "SANTE"
-              ? "Gérez vos honoraires, dépenses et suivez votre trésorerie"
-              : "Gérez vos revenus, dépenses et suivez votre trésorerie"}
+              ? "Honoraires, dépenses et trésorerie"
+              : "Revenus, dépenses et trésorerie"}
           </p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-2">
           <Link href="/finance/new">
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              Nouvelle dépense
+            <Button size="sm">
+              <Plus className="h-4 w-4" />
+              <span className="hidden md:inline ml-2">Nouvelle dépense</span>
             </Button>
           </Link>
-          <Button variant="outline">
+          <Button variant="outline" size="sm" className="hidden md:flex">
             <Calendar className="h-4 w-4 mr-2" />
             Exporter
           </Button>
@@ -343,70 +343,68 @@ export default async function FinancePage() {
 
       {/* Stats Overview - COMMERCE */}
       {sector === "COMMERCE" && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 md:gap-6 mb-4 md:mb-8">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 pt-3 px-3 md:p-6 md:pb-2">
+              <CardTitle className="text-xs font-medium text-gray-600 leading-tight">
                 Ventes ce mois
               </CardTitle>
               <TrendingUp className="h-4 w-4 text-green-600" />
             </CardHeader>
-            <CardContent>
-              <div className="text-lg md:text-2xl font-bold text-green-600 break-words">
+            <CardContent className="px-3 pb-3 md:px-6 md:pb-4">
+              <div className="text-sm md:text-2xl font-bold text-green-600 break-all">
                 <CurrencyAmount amount={stats.monthly.sales} />
               </div>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-500 mt-0.5 hidden md:block">
                 {stats.monthly.salesCount} transaction{stats.monthly.salesCount > 1 ? "s" : ""}
               </p>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 pt-3 px-3 md:p-6 md:pb-2">
+              <CardTitle className="text-xs font-medium text-gray-600 leading-tight">
                 Dépenses ce mois
               </CardTitle>
               <TrendingDown className="h-4 w-4 text-red-600" />
             </CardHeader>
-            <CardContent>
-              <div className="text-lg md:text-2xl font-bold text-red-600 break-words">
+            <CardContent className="px-3 pb-3 md:px-6 md:pb-4">
+              <div className="text-sm md:text-2xl font-bold text-red-600 break-all">
                 <CurrencyAmount amount={stats.monthly.expenses} />
               </div>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-500 mt-0.5 hidden md:block">
                 {stats.monthly.expensesCount} dépense{stats.monthly.expensesCount > 1 ? "s" : ""}
               </p>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 pt-3 px-3 md:p-6 md:pb-2">
+              <CardTitle className="text-xs font-medium text-gray-600 leading-tight">
                 Bénéfice mensuel
               </CardTitle>
               <DollarSign className="h-4 w-4 text-blue-600" />
             </CardHeader>
-            <CardContent>
-              <div className={`text-lg md:text-2xl font-bold break-words ${stats.monthly.profit >= 0 ? "text-green-600" : "text-red-600"}`}>
+            <CardContent className="px-3 pb-3 md:px-6 md:pb-4">
+              <div className={`text-sm md:text-2xl font-bold break-all ${stats.monthly.profit >= 0 ? "text-green-600" : "text-red-600"}`}>
                 <CurrencyAmount amount={stats.monthly.profit} />
               </div>
-              <p className="text-xs text-gray-500 mt-1">
-                Ce mois-ci
-              </p>
+              <p className="text-xs text-gray-500 mt-0.5 hidden md:block">Ce mois-ci</p>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 pt-3 px-3 md:p-6 md:pb-2">
+              <CardTitle className="text-xs font-medium text-gray-600 leading-tight">
                 Total des ventes
               </CardTitle>
               <TrendingUp className="h-4 w-4 text-purple-600" />
             </CardHeader>
-            <CardContent>
-              <div className="text-lg md:text-2xl font-bold text-purple-600 break-words">
+            <CardContent className="px-3 pb-3 md:px-6 md:pb-4">
+              <div className="text-sm md:text-2xl font-bold text-purple-600 break-all">
                 <CurrencyAmount amount={stats.total.sales} />
               </div>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-500 mt-0.5 hidden md:block">
                 {stats.total.salesCount} vente{stats.total.salesCount > 1 ? "s" : ""} au total
               </p>
             </CardContent>
@@ -416,70 +414,68 @@ export default async function FinancePage() {
 
       {/* Stats Overview - SANTE */}
       {sector === "SANTE" && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 md:gap-6 mb-4 md:mb-8">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 pt-3 px-3 md:p-6 md:pb-2">
+              <CardTitle className="text-xs font-medium text-gray-600 leading-tight">
                 Honoraires ce mois
               </CardTitle>
               <TrendingUp className="h-4 w-4 text-green-600" />
             </CardHeader>
-            <CardContent>
-              <div className="text-lg md:text-2xl font-bold text-green-600 break-words">
+            <CardContent className="px-3 pb-3 md:px-6 md:pb-4">
+              <div className="text-sm md:text-2xl font-bold text-green-600 break-all">
                 <CurrencyAmount amount={stats.monthly.fees} />
               </div>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-500 mt-0.5 hidden md:block">
                 {stats.monthly.feesCount} consultation{stats.monthly.feesCount > 1 ? "s" : ""}
               </p>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 pt-3 px-3 md:p-6 md:pb-2">
+              <CardTitle className="text-xs font-medium text-gray-600 leading-tight">
                 Dépenses ce mois
               </CardTitle>
               <TrendingDown className="h-4 w-4 text-red-600" />
             </CardHeader>
-            <CardContent>
-              <div className="text-lg md:text-2xl font-bold text-red-600 break-words">
+            <CardContent className="px-3 pb-3 md:px-6 md:pb-4">
+              <div className="text-sm md:text-2xl font-bold text-red-600 break-all">
                 <CurrencyAmount amount={stats.monthly.expenses} />
               </div>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-500 mt-0.5 hidden md:block">
                 {stats.monthly.expensesCount} dépense{stats.monthly.expensesCount > 1 ? "s" : ""}
               </p>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 pt-3 px-3 md:p-6 md:pb-2">
+              <CardTitle className="text-xs font-medium text-gray-600 leading-tight">
                 Bénéfice mensuel
               </CardTitle>
               <DollarSign className="h-4 w-4 text-blue-600" />
             </CardHeader>
-            <CardContent>
-              <div className={`text-lg md:text-2xl font-bold break-words ${stats.monthly.profit >= 0 ? "text-green-600" : "text-red-600"}`}>
+            <CardContent className="px-3 pb-3 md:px-6 md:pb-4">
+              <div className={`text-sm md:text-2xl font-bold break-all ${stats.monthly.profit >= 0 ? "text-green-600" : "text-red-600"}`}>
                 <CurrencyAmount amount={stats.monthly.profit} />
               </div>
-              <p className="text-xs text-gray-500 mt-1">
-                Ce mois-ci
-              </p>
+              <p className="text-xs text-gray-500 mt-0.5 hidden md:block">Ce mois-ci</p>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 pt-3 px-3 md:p-6 md:pb-2">
+              <CardTitle className="text-xs font-medium text-gray-600 leading-tight">
                 Impayés
               </CardTitle>
               <TrendingDown className="h-4 w-4 text-orange-600" />
             </CardHeader>
-            <CardContent>
-              <div className="text-lg md:text-2xl font-bold text-orange-600 break-words">
+            <CardContent className="px-3 pb-3 md:px-6 md:pb-4">
+              <div className="text-sm md:text-2xl font-bold text-orange-600 break-all">
                 <CurrencyAmount amount={stats.total.unpaidAmount} />
               </div>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-500 mt-0.5 hidden md:block">
                 {stats.total.unpaidCount} consultation{stats.total.unpaidCount > 1 ? "s" : ""}
               </p>
             </CardContent>
@@ -489,67 +485,65 @@ export default async function FinancePage() {
 
       {/* Stats Overview - AUTRE (Mixed) */}
       {sector === "AUTRE" && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 md:gap-6 mb-4 md:mb-8">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 pt-3 px-3 md:p-6 md:pb-2">
+              <CardTitle className="text-xs font-medium text-gray-600 leading-tight">
                 Ventes commerce
               </CardTitle>
               <TrendingUp className="h-4 w-4 text-green-600" />
             </CardHeader>
-            <CardContent>
-              <div className="text-lg md:text-2xl font-bold text-green-600 break-words">
+            <CardContent className="px-3 pb-3 md:px-6 md:pb-4">
+              <div className="text-sm md:text-2xl font-bold text-green-600 break-all">
                 <CurrencyAmount amount={stats.monthly.sales} />
               </div>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-500 mt-0.5 hidden md:block">
                 {stats.monthly.salesCount} vente{stats.monthly.salesCount > 1 ? "s" : ""}
               </p>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 pt-3 px-3 md:p-6 md:pb-2">
+              <CardTitle className="text-xs font-medium text-gray-600 leading-tight">
                 Honoraires santé
               </CardTitle>
               <TrendingUp className="h-4 w-4 text-blue-600" />
             </CardHeader>
-            <CardContent>
-              <div className="text-lg md:text-2xl font-bold text-blue-600 break-words">
+            <CardContent className="px-3 pb-3 md:px-6 md:pb-4">
+              <div className="text-sm md:text-2xl font-bold text-blue-600 break-all">
                 <CurrencyAmount amount={stats.monthly.fees} />
               </div>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-500 mt-0.5 hidden md:block">
                 {stats.monthly.feesCount} consultation{stats.monthly.feesCount > 1 ? "s" : ""}
               </p>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 pt-3 px-3 md:p-6 md:pb-2">
+              <CardTitle className="text-xs font-medium text-gray-600 leading-tight">
                 Revenus totaux
               </CardTitle>
               <DollarSign className="h-4 w-4 text-purple-600" />
             </CardHeader>
-            <CardContent>
-              <div className="text-lg md:text-2xl font-bold text-purple-600 break-words">
+            <CardContent className="px-3 pb-3 md:px-6 md:pb-4">
+              <div className="text-sm md:text-2xl font-bold text-purple-600 break-all">
                 <CurrencyAmount amount={stats.monthly.revenue} />
               </div>
-              <p className="text-xs text-gray-500 mt-1">
-                Ce mois-ci
-              </p>
+              <p className="text-xs text-gray-500 mt-0.5 hidden md:block">Ce mois-ci</p>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 pt-3 px-3 md:p-6 md:pb-2">
+              <CardTitle className="text-xs font-medium text-gray-600 leading-tight">
                 Bénéfice mensuel
               </CardTitle>
               <TrendingDown className="h-4 w-4 text-red-600" />
             </CardHeader>
-            <CardContent>
-              <div className={`text-lg md:text-2xl font-bold break-words ${stats.monthly.profit >= 0 ? "text-green-600" : "text-red-600"}`}>
+            <CardContent className="px-3 pb-3 md:px-6 md:pb-4">
+              <div className={`text-sm md:text-2xl font-bold break-all ${stats.monthly.profit >= 0 ? "text-green-600" : "text-red-600"}`}>
                 <CurrencyAmount amount={stats.monthly.profit} />
               </div>
               <p className="text-xs text-gray-500 mt-1">

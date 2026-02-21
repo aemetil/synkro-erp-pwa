@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { logout } from "@/lib/actions/auth"
-import { LogOut, Settings, User } from "lucide-react"
+import { LogOut, Menu, Settings, User } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { CurrencySwitch } from "@/components/currency-switch"
 
@@ -24,32 +24,29 @@ interface HeaderProps {
     role?: string
     entrepriseName?: string
   }
+  onMenuClick: () => void
 }
 
-export function Header({ user }: HeaderProps) {
+export function Header({ user, onMenuClick }: HeaderProps) {
   const router = useRouter()
 
   const initials = user.name
-    ? user.name
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .toUpperCase()
+    ? user.name.split(" ").map((n) => n[0]).join("").toUpperCase()
     : user.email?.[0].toUpperCase() || "U"
 
   return (
-    <header className="flex h-16 items-center justify-between border-b bg-white px-6">
-      <div>
-        <h2 className="text-sm font-medium text-gray-600">
+    <header className="flex h-16 items-center justify-between border-b bg-white px-4 md:px-6">
+      <div className="flex items-center gap-3">
+        <Button variant="ghost" size="sm" className="lg:hidden flex-shrink-0 p-2" onClick={onMenuClick}>
+          <Menu className="h-5 w-5" />
+        </Button>
+        <h2 className="text-sm font-medium text-gray-600 truncate">
           {user.entrepriseName || "Mon Entreprise"}
         </h2>
       </div>
 
       <div className="flex items-center gap-4">
-        {/* Currency Switch */}
         <CurrencySwitch />
-
-        {/* User Menu */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="relative h-10 w-10 rounded-full">
@@ -63,31 +60,24 @@ export function Header({ user }: HeaderProps) {
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
                 <p className="text-sm font-medium leading-none">{user.name}</p>
-                <p className="text-xs leading-none text-muted-foreground">
-                  {user.email}
-                </p>
+                <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
                 {user.role && (
-                  <p className="text-xs leading-none text-muted-foreground">
-                    Rôle: {user.role}
-                  </p>
+                  <p className="text-xs leading-none text-muted-foreground">Rôle: {user.role}</p>
                 )}
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => router.push("/settings")}>
-              <User className="mr-2 h-4 w-4" />
-              <span>Profil</span>
+              <User className="mr-2 h-4 w-4" /><span>Profil</span>
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => router.push("/settings")}>
-              <Settings className="mr-2 h-4 w-4" />
-              <span>Paramètres</span>
+              <Settings className="mr-2 h-4 w-4" /><span>Paramètres</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <form action={logout} className="w-full">
                 <button type="submit" className="flex w-full items-center text-red-600">
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Déconnexion</span>
+                  <LogOut className="mr-2 h-4 w-4" /><span>Déconnexion</span>
                 </button>
               </form>
             </DropdownMenuItem>
