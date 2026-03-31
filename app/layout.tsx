@@ -11,13 +11,13 @@ export const metadata: Metadata = {
   description: "Solution de gestion complète pour PME et indépendants",
   icons: {
     icon: [
-      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
-      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon/favicon-96x96.png", sizes: "96x96", type: "image/png" },
+      { url: "/favicon/favicon.ico", sizes: "48x48" },
     ],
-    apple: "/apple-touch-icon.png",
-    shortcut: "/favicon.ico",
+    apple: "/favicon/apple-touch-icon.png",
   },
-  manifest: "/site.webmanifest",
+  manifest: "/favicon/site.webmanifest",
 }
 
 export default function RootLayout({

@@ -22,7 +22,7 @@ export default function LandingPage() {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Image src="/logos/s_logo.png" alt="S" width={32} height={32} priority />
-            <Image src="/logos/synkro_blue_logo.png" alt="Synkro" width={100} height={30} priority className="hidden md:block" />
+            <span className="font-bold text-lg text-blue-600 hidden md:block">Synkro</span>
           </div>
           <nav className="hidden md:flex items-center gap-6">
             <a href="#features" className="text-sm text-gray-600 hover:text-gray-900">
@@ -53,7 +53,7 @@ export default function LandingPage() {
             <Zap className="h-4 w-4" />
             Version 1.2.0 - Tous les modules disponibles
           </div>
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+          <h1 className="text-4xl md:text-6xl font-bold text-blue-600 mb-6">
             Gérez votre entreprise
             <span className="block text-primary">en toute simplicité</span>
           </h1>
@@ -80,7 +80,7 @@ export default function LandingPage() {
       <section id="features" className="container mx-auto px-4 py-20 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-blue-600 mb-4">
               Pourquoi choisir notre ERP ?
             </h2>
             <p className="text-xl text-gray-600">
@@ -138,7 +138,7 @@ export default function LandingPage() {
       <section id="modules" className="container mx-auto px-4 py-20">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-blue-600 mb-4">
               Des modules adaptés à vos besoins
             </h2>
             <p className="text-xl text-gray-600">
@@ -240,7 +240,7 @@ export default function LandingPage() {
       {/* Pricing Section */}
       <section id="pricing" className="container mx-auto px-4 py-20 bg-white">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-blue-600 mb-4">
             Prêt à démarrer ?
           </h2>
           <p className="text-xl text-gray-600 mb-8">
@@ -268,7 +268,7 @@ export default function LandingPage() {
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <Image src="/logos/s_logo.png" alt="S" width={28} height={28} />
-                <Image src="/logos/synkro_blue_logo.png" alt="Synkro" width={85} height={26} className="hidden md:block" />
+                <span className="font-bold text-base text-blue-600">Synkro</span>
               </div>
               <p className="text-sm text-gray-600">
                 Solution complète de gestion d'entreprise
@@ -334,19 +334,20 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="border-t mt-8 pt-8 text-center text-sm text-gray-600">
+          <div className="border-t mt-8 pt-8 text-center text-sm text-gray-400">
             <p>
-              Made with ❤️ by{" "}
+              Built &amp; designed by{" "}
               <a
-                href="https://qonekt.com"
+                href="https://aemetil.github.io"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary hover:underline"
+                className="hover:text-gray-600 inline-flex items-center gap-0.5"
               >
-                a.emetil
+                aemetil
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-0.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
               </a>
             </p>
-            <p className="mt-2">© 2026 Synkro. Tous droits réservés.</p>
+            <p className="mt-1">© 2026 Synkro. Tous droits réservés.</p>
           </div>
         </div>
       </footer>

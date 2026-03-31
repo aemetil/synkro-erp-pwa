@@ -10,9 +10,9 @@ export default function TermsPage() {
       {/* Header */}
       <header className="border-b bg-white">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" >
+          <Link href="/" className="flex items-center gap-2">
             <Image src="/logos/s_logo.png" alt="S" width={32} height={32} />
-            <Image src="/logos/synkro_blue_logo.png" alt="Synkro" width={100} height={30} className="hidden md:block" />
+            <span className="font-bold text-lg text-blue-600">Synkro</span>
           </Link>
           <Link href="/">
             <Button variant="outline" size="sm">
@@ -26,7 +26,7 @@ export default function TermsPage() {
       {/* Content */}
       <main className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-sm p-8 md:p-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl font-bold text-blue-600 mb-4">
             Conditions Générales d'Utilisation
           </h1>
           <p className="text-gray-600 mb-8">
@@ -156,16 +156,10 @@ export default function TermsPage() {
             </section>
           </div>
 
-          <div className="mt-12 pt-8 border-t">
-            <p className="text-sm text-gray-600 text-center">
-              Made with ❤️ by{" "}
-              <a
-                href="https://qonekt.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary hover:underline"
-              >
-                a.emetil
+          <div className="mt-12 pt-8 border-t text-center text-sm text-gray-400">
+            <p>Built &amp; designed by{" "}
+              <a href="https://aemetil.github.io" target="_blank" rel="noopener noreferrer" className="hover:text-gray-600 inline-flex items-center gap-0.5">
+                aemetil<svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-0.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
               </a>
             </p>
           </div>

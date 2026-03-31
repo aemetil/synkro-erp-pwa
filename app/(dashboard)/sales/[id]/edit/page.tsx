@@ -77,7 +77,7 @@ export default async function EditSalePage({ params }: { params: { id: string } 
                   id="subtotal"
                   name="subtotal"
                   type="number"
-                  step="0.01"
+                  step="any"
                   min="0"
                   defaultValue={sale.subtotal}
                   placeholder="1000.00"
@@ -91,7 +91,7 @@ export default async function EditSalePage({ params }: { params: { id: string } 
                   id="taxRate"
                   name="taxRate"
                   type="number"
-                  step="0.01"
+                  step="any"
                   min="0"
                   max="100"
                   defaultValue={taxRate.toFixed(2)}
@@ -107,7 +107,7 @@ export default async function EditSalePage({ params }: { params: { id: string } 
                   id="discount"
                   name="discount"
                   type="number"
-                  step="0.01"
+                  step="any"
                   min="0"
                   defaultValue={sale.discount}
                   placeholder="0"

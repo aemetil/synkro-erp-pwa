@@ -48,7 +48,7 @@ export default async function ProductsPage() {
   // Calculate stats
   const totalProducts = products.length
   const lowStockCount = products.filter(
-    (p) => p.currentStock <= p.minStockLevel
+    (p) => p.currentStock > 0 && p.currentStock <= p.minStockLevel
   ).length
   const outOfStockCount = products.filter((p) => p.currentStock === 0).length
   const totalStockValue = products.reduce(

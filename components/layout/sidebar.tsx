@@ -42,7 +42,7 @@ export function Sidebar({ sector, isOpen, onClose }: SidebarProps) {
       <div className="flex h-16 items-center justify-between border-b px-6">
         <Link href="/dashboard" className="flex items-center gap-2">
           <Image src="/logos/s_logo.png" alt="S" width={32} height={32} priority />
-          <Image src="/logos/synkro_blue_logo.png" alt="Synkro" width={100} height={30} priority />
+          <span className="font-bold text-lg text-blue-600">Synkro</span>
         </Link>
         <button className="lg:hidden p-1 rounded text-gray-400 hover:text-gray-600" onClick={onClose} aria-label="Fermer">
           <X className="h-5 w-5" />
@@ -65,11 +65,17 @@ export function Sidebar({ sector, isOpen, onClose }: SidebarProps) {
       </nav>
 
       <div className="border-t p-4">
-        <div className="text-xs text-gray-500 space-y-2">
-          <p className="font-medium">Version 1.2.0</p>
-          <p className="text-gray-400">Made with ❤️ by{" "}
-            <a href="https://qonekt.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">a.emetil</a>
-          </p>
+        <div className="text-xs text-gray-400 space-y-1">
+          <p className="font-medium text-gray-500">Synkro v1.2.1</p>
+          <a
+            href="https://aemetil.github.io"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 hover:text-gray-600"
+          >
+            Built &amp; designed by aemetil
+            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </a>
         </div>
       </div>
     </div>

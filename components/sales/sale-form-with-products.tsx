@@ -222,7 +222,7 @@ export function SaleFormWithProducts({ products, onSubmit }: Props) {
                     <Label>Prix unitaire</Label>
                     <Input
                       type="number"
-                      step="0.01"
+                      step="any"
                       min="0"
                       value={item.unitPrice}
                       onChange={(e) =>

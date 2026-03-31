@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button"
 async function getCommerceFinanceStats(entrepriseId: string) {
   const now = new Date()
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
-  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999)
 
   // Monthly sales
   const monthlySales = await db.sale.aggregate({
@@ -22,6 +22,19 @@ async function getCommerceFinanceStats(entrepriseId: string) {
     _sum: { total: true },
     _count: true,
   })
+
+  // Monthly COGS (cost of goods sold)
+  const monthlySaleItems = await db.saleItem.findMany({
+    where: {
+      sale: { entrepriseId, date: { gte: startOfMonth, lte: endOfMonth } },
+      productId: { not: null },
+    },
+    include: { product: { select: { costPrice: true } } },
+  })
+  const monthCogs = monthlySaleItems.reduce(
+    (sum, item) => sum + item.quantity * (item.product?.costPrice ?? 0),
+    0
+  )
 
   // Monthly expenses
   const monthlyExpenses = await db.expense.aggregate({
@@ -61,13 +74,16 @@ async function getCommerceFinanceStats(entrepriseId: string) {
     take: 10,
   })
 
+  const monthlySalesTotal = monthlySales._sum.total || 0
+  const monthlyExpensesTotal = monthlyExpenses._sum.amount || 0
+
   return {
     monthly: {
-      sales: monthlySales._sum.total || 0,
+      sales: monthlySalesTotal,
       salesCount: monthlySales._count,
-      expenses: monthlyExpenses._sum.amount || 0,
+      expenses: monthlyExpensesTotal,
       expensesCount: monthlyExpenses._count,
-      profit: (monthlySales._sum.total || 0) - (monthlyExpenses._sum.amount || 0),
+      profit: monthlySalesTotal - monthCogs - monthlyExpensesTotal,
     },
     total: {
       sales: totalSales._sum.total || 0,
@@ -87,7 +103,7 @@ async function getCommerceFinanceStats(entrepriseId: string) {
 async function getSanteFinanceStats(entrepriseId: string) {
   const now = new Date()
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
-  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999)
 
   // Monthly consultations (honoraires)
   const monthlyConsultations = await db.consultation.aggregate({
@@ -175,7 +191,7 @@ async function getSanteFinanceStats(entrepriseId: string) {
 async function getMixedFinanceStats(entrepriseId: string) {
   const now = new Date()
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
-  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999)
 
   // Monthly sales
   const monthlySales = await db.sale.aggregate({
@@ -250,6 +266,19 @@ async function getMixedFinanceStats(entrepriseId: string) {
     take: 10,
   })
 
+  // Monthly COGS (cost of goods sold)
+  const mixedMonthlySaleItems = await db.saleItem.findMany({
+    where: {
+      sale: { entrepriseId, date: { gte: startOfMonth, lte: endOfMonth } },
+      productId: { not: null },
+    },
+    include: { product: { select: { costPrice: true } } },
+  })
+  const mixedMonthCogs = mixedMonthlySaleItems.reduce(
+    (sum, item) => sum + item.quantity * (item.product?.costPrice ?? 0),
+    0
+  )
+
   const monthlySalesTotal = monthlySales._sum.total || 0
   const monthlyFeesTotal = monthlyConsultations._sum.fee || 0
   const monthlyRevenue = monthlySalesTotal + monthlyFeesTotal
@@ -269,7 +298,7 @@ async function getMixedFinanceStats(entrepriseId: string) {
       revenue: monthlyRevenue,
       expenses: monthlyExpensesTotal,
       expensesCount: monthlyExpenses._count,
-      profit: monthlyRevenue - monthlyExpensesTotal,
+      profit: monthlyRevenue - mixedMonthCogs - monthlyExpensesTotal,
     },
     total: {
       sales: totalSalesAmount,

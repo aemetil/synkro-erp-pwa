@@ -45,7 +45,7 @@ export default function SignupPage() {
         <CardHeader className="space-y-1">
           <div className="flex items-center justify-center gap-2 mb-2">
             <Image src="/logos/s_logo.png" alt="S" width={36} height={36} priority />
-            <Image src="/logos/synkro_blue_logo.png" alt="Synkro" width={110} height={34} priority className="hidden sm:block" />
+            <span className="font-bold text-xl text-blue-600">Synkro</span>
           </div>
           <CardTitle className="text-2xl font-bold text-center">
             Créer un compte

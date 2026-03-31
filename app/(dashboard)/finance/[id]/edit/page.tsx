@@ -74,7 +74,7 @@ export default async function EditExpensePage({ params }: { params: { id: string
                   id="amount"
                   name="amount"
                   type="number"
-                  step="0.01"
+                  step="any"
                   min="0"
                   defaultValue={expense.amount}
                   placeholder="500.00"

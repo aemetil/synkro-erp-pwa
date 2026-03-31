@@ -15,12 +15,23 @@ const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined
 export function CurrencyProvider({ children }: { children: ReactNode }) {
   const [currency, setCurrencyState] = useState<Currency>("HTG")
 
-  // Charger la préférence depuis localStorage au montage
+  // Lire localStorage après montage pour éviter le mismatch d'hydration
   useEffect(() => {
     const saved = localStorage.getItem("preferred-currency")
     if (saved === "HTG" || saved === "USD") {
-      setCurrencyState(saved)
+      setCurrencyState(saved as Currency)
     }
+  }, [])
+
+  // Sync si localStorage change dans un autre onglet
+  useEffect(() => {
+    const handler = (e: StorageEvent) => {
+      if (e.key === "preferred-currency" && (e.newValue === "HTG" || e.newValue === "USD")) {
+        setCurrencyState(e.newValue as Currency)
+      }
+    }
+    window.addEventListener("storage", handler)
+    return () => window.removeEventListener("storage", handler)
   }, [])
 
   // Sauvegarder la préférence dans localStorage
@@ -29,12 +40,13 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("preferred-currency", newCurrency)
   }
 
-  // Fonction de formatage
+  // Fonction de formatage — affiche les décimales seulement si nécessaire
   const formatAmount = (amount: number) => {
+    const isWhole = Number.isInteger(amount)
     return new Intl.NumberFormat("fr-HT", {
       style: "currency",
       currency: currency,
-      minimumFractionDigits: 2,
+      minimumFractionDigits: isWhole ? 0 : 2,
       maximumFractionDigits: 2,
     }).format(amount)
   }

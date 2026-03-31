@@ -61,6 +61,8 @@ export async function createConsultation(formData: FormData) {
   revalidatePath("/sante/consultations")
   revalidatePath(`/sante/patients/${patientId}`)
   revalidatePath("/sante")
+  revalidatePath("/dashboard")
+  revalidatePath("/reports")
   redirect(`/sante/consultations/${consultation.id}`)
 }
 
@@ -125,6 +127,8 @@ export async function updateConsultation(consultationId: string, formData: FormD
   revalidatePath("/sante/consultations")
   revalidatePath(`/sante/patients/${consultation.patientId}`)
   revalidatePath("/sante")
+  revalidatePath("/dashboard")
+  revalidatePath("/reports")
   redirect(`/sante/consultations/${consultationId}`)
 }
 
@@ -153,5 +157,7 @@ export async function deleteConsultation(consultationId: string) {
   revalidatePath("/sante/consultations")
   revalidatePath(`/sante/patients/${consultation.patientId}`)
   revalidatePath("/sante")
+  revalidatePath("/dashboard")
+  revalidatePath("/reports")
   redirect("/sante/consultations")
 }

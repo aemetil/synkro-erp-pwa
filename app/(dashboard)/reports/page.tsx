@@ -9,12 +9,11 @@ import { Download, Calendar, TrendingUp, TrendingDown } from "lucide-react"
 
 async function getReportData(entrepriseId: string) {
   // Get data for the last 6 months
+  const now = new Date()
   const months = []
   for (let i = 5; i >= 0; i--) {
-    const date = new Date()
-    date.setMonth(date.getMonth() - i)
-    const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1)
-    const endOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0)
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth() - i, 1, 0, 0, 0, 0)
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() - i + 1, 0, 23, 59, 59, 999)
 
     const sales = await db.sale.aggregate({
       where: {

@@ -157,7 +157,7 @@ export default async function EditProductPage({
                         id="costPrice"
                         name="costPrice"
                         type="number"
-                        step="0.01"
+                        step="any"
                         min="0"
                         defaultValue={product.costPrice}
                       />
@@ -171,7 +171,7 @@ export default async function EditProductPage({
                         id="sellingPrice"
                         name="sellingPrice"
                         type="number"
-                        step="0.01"
+                        step="any"
                         min="0"
                         required
                         defaultValue={product.sellingPrice}
@@ -184,7 +184,7 @@ export default async function EditProductPage({
                         id="taxRate"
                         name="taxRate"
                         type="number"
-                        step="0.01"
+                        step="any"
                         min="0"
                         max="100"
                         defaultValue={product.taxRate}

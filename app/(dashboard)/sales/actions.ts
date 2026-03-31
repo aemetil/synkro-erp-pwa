@@ -54,6 +54,8 @@ export async function createSale(formData: FormData) {
   // Revalider le cache et rediriger
   revalidatePath("/sales")
   revalidatePath("/dashboard")
+  revalidatePath("/finance")
+  revalidatePath("/reports")
   redirect("/sales")
 }
 
@@ -184,6 +186,7 @@ export async function createSaleWithProducts(formData: FormData) {
   revalidatePath("/dashboard")
   revalidatePath("/finance")
   revalidatePath("/commerce")
+  revalidatePath("/reports")
   redirect("/sales")
 }
 
@@ -215,6 +218,7 @@ export async function createExpense(formData: FormData) {
 
   revalidatePath("/finance")
   revalidatePath("/dashboard")
+  revalidatePath("/reports")
   redirect("/finance")
 }
 
@@ -264,6 +268,8 @@ export async function updateSale(saleId: string, formData: FormData) {
 
   revalidatePath("/sales")
   revalidatePath("/dashboard")
+  revalidatePath("/finance")
+  revalidatePath("/reports")
   redirect("/sales")
 }
 
@@ -304,6 +310,7 @@ export async function updateExpense(expenseId: string, formData: FormData) {
 
   revalidatePath("/finance")
   revalidatePath("/dashboard")
+  revalidatePath("/reports")
   redirect("/finance")
 }
 
@@ -329,6 +336,8 @@ export async function deleteSale(saleId: string) {
 
   revalidatePath("/sales")
   revalidatePath("/dashboard")
+  revalidatePath("/finance")
+  revalidatePath("/reports")
   redirect("/sales")
 }
 
@@ -354,5 +363,6 @@ export async function deleteExpense(expenseId: string) {
 
   revalidatePath("/finance")
   revalidatePath("/dashboard")
+  revalidatePath("/reports")
   redirect("/finance")
 }

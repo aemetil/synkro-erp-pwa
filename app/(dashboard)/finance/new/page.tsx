@@ -52,7 +52,7 @@ export default function NewExpensePage() {
                   id="amount"
                   name="amount"
                   type="number"
-                  step="0.01"
+                  step="any"
                   min="0"
                   placeholder="500.00"
                   required

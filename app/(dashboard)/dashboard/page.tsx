@@ -2,7 +2,6 @@
 import { auth } from "@/lib/auth"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { db } from "@/lib/db"
-import { formatCurrency } from "@/lib/utils"
 import { TrendingUp, TrendingDown, DollarSign, ShoppingCart, Receipt, Heart, Package } from "lucide-react"
 import { CurrencyAmount } from "@/components/currency-amount"
 
@@ -10,7 +9,7 @@ import { CurrencyAmount } from "@/components/currency-amount"
 async function getCommerceStats(entrepriseId: string) {
   const now = new Date()
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
-  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999)
 
   // Ventes avec produits
   const salesData = await db.sale.aggregate({
@@ -21,6 +20,24 @@ async function getCommerceStats(entrepriseId: string) {
     _sum: { total: true },
     _count: true,
   })
+
+  // Coût des articles vendus ce mois (COGS)
+  const saleItems = await db.saleItem.findMany({
+    where: {
+      sale: {
+        entrepriseId,
+        date: { gte: startOfMonth, lte: endOfMonth },
+      },
+      productId: { not: null },
+    },
+    include: {
+      product: { select: { costPrice: true } },
+    },
+  })
+  const cogs = saleItems.reduce(
+    (sum, item) => sum + item.quantity * (item.product?.costPrice ?? 0),
+    0
+  )
 
   // Dépenses
   const expensesData = await db.expense.aggregate({
@@ -42,7 +59,8 @@ async function getCommerceStats(entrepriseId: string) {
 
   const monthlySales = salesData._sum.total || 0
   const monthlyExpenses = expensesData._sum.amount || 0
-  const profit = monthlySales - monthlyExpenses
+  // Bénéfice net = CA - coût d'achat des produits vendus - autres dépenses
+  const profit = monthlySales - cogs - monthlyExpenses
 
   return {
     type: "COMMERCE" as const,
@@ -59,7 +77,7 @@ async function getCommerceStats(entrepriseId: string) {
 async function getSanteStats(entrepriseId: string) {
   const now = new Date()
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
-  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999)
 
   // Honoraires consultations
   const consultationsData = await db.consultation.aggregate({
@@ -111,7 +129,7 @@ async function getSanteStats(entrepriseId: string) {
 async function getMixedStats(entrepriseId: string) {
   const now = new Date()
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
-  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999)
 
   // Ventes générales
   const salesData = await db.sale.aggregate({
@@ -143,11 +161,29 @@ async function getMixedStats(entrepriseId: string) {
     _count: true,
   })
 
+  // Coût des articles vendus ce mois (COGS)
+  const saleItemsMixed = await db.saleItem.findMany({
+    where: {
+      sale: {
+        entrepriseId,
+        date: { gte: startOfMonth, lte: endOfMonth },
+      },
+      productId: { not: null },
+    },
+    include: {
+      product: { select: { costPrice: true } },
+    },
+  })
+  const cogsMixed = saleItemsMixed.reduce(
+    (sum, item) => sum + item.quantity * (item.product?.costPrice ?? 0),
+    0
+  )
+
   const monthlySales = salesData._sum.total || 0
   const monthlyFees = consultationsData._sum.fee || 0
   const totalRevenue = monthlySales + monthlyFees
   const monthlyExpenses = expensesData._sum.amount || 0
-  const profit = totalRevenue - monthlyExpenses
+  const profit = monthlySales - cogsMixed + monthlyFees - monthlyExpenses
 
   return {
     type: "AUTRE" as const,
@@ -475,7 +511,7 @@ async function RecentActivity({ entrepriseId, sector }: { entrepriseId: string; 
               </div>
             </div>
             <div className="text-sm font-semibold text-green-600">
-              +{formatCurrency(consultation.fee)}
+              +<CurrencyAmount amount={consultation.fee} />
             </div>
           </div>
         ))}
@@ -511,7 +547,7 @@ async function RecentActivity({ entrepriseId, sector }: { entrepriseId: string; 
               </div>
             </div>
             <div className="text-sm font-semibold text-green-600">
-              +{formatCurrency(sale.total)}
+              +<CurrencyAmount amount={sale.total} />
             </div>
           </div>
         ))}
@@ -547,7 +583,7 @@ async function RecentExpenses({ entrepriseId }: { entrepriseId: string }) {
             </div>
           </div>
           <div className="text-sm font-semibold text-red-600">
-            -{formatCurrency(expense.amount)}
+            -<CurrencyAmount amount={expense.amount} />
           </div>
         </div>
       ))}

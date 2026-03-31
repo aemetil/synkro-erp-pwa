@@ -209,7 +209,7 @@ export default async function NewConsultationPage() {
                   id="fee"
                   name="fee"
                   type="number"
-                  step="0.01"
+                  step="any"
                   min="0"
                   defaultValue="0"
                   placeholder="500.00"

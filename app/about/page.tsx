@@ -21,9 +21,9 @@ export default function AboutPage() {
       {/* Header */}
       <header className="border-b bg-white">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" >
+          <Link href="/" className="flex items-center gap-2">
             <Image src="/logos/s_logo.png" alt="S" width={32} height={32} />
-            <Image src="/logos/synkro_blue_logo.png" alt="Synkro" width={100} height={30} className="hidden md:block" />
+            <span className="font-bold text-lg text-blue-600">Synkro</span>
           </Link>
           <Link href="/">
             <Button variant="outline" size="sm">
@@ -38,7 +38,7 @@ export default function AboutPage() {
       <main className="container mx-auto px-4 py-12">
         {/* Hero Section */}
         <div className="max-w-4xl mx-auto text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+          <h1 className="text-4xl md:text-5xl font-bold text-blue-600 mb-6">
             À propos de nous
           </h1>
           <p className="text-xl text-gray-600 leading-relaxed">
@@ -82,7 +82,7 @@ export default function AboutPage() {
         {/* Values */}
         <div className="max-w-6xl mx-auto mb-16">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-blue-600 mb-4">
               Nos Valeurs
             </h2>
             <p className="text-xl text-gray-600">
@@ -138,7 +138,7 @@ export default function AboutPage() {
         {/* Why Choose Us */}
         <div className="max-w-6xl mx-auto mb-16">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-blue-600 mb-4">
               Pourquoi nous choisir ?
             </h2>
           </div>
@@ -239,7 +239,7 @@ export default function AboutPage() {
         {/* Team */}
         <div className="max-w-4xl mx-auto mb-16">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-blue-600 mb-4">
               Notre Équipe
             </h2>
             <p className="text-xl text-gray-600">
@@ -254,7 +254,7 @@ export default function AboutPage() {
                   <span className="text-2xl font-bold text-primary">B</span>
                 </div>
                 <h3 className="font-semibold text-xl text-gray-900 mb-1">
-                  b.odnis
+                  Billy Odnis
                 </h3>
                 <p className="text-primary mb-3">Co-fondateur & Vision</p>
                 <p className="text-gray-600">
@@ -269,18 +269,18 @@ export default function AboutPage() {
                   <span className="text-2xl font-bold text-primary">A</span>
                 </div>
                 <h3 className="font-semibold text-xl text-gray-900 mb-1">
-                  a.emetil
+                  aemetil
                 </h3>
-                <p className="text-primary mb-3">Co-fondateur & Développeur</p>
+                <p className="text-primary mb-3">Co-fondateur &amp; Product Eng.</p>
                 <p className="text-gray-600">
                   Créateur de solutions innovantes et passionné par l'entrepreneuriat. Également fondateur de{" "}
                   <a
-                    href="https://qonekt.com"
+                    href="https://tripotay.me"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-primary hover:underline"
                   >
-                    Qonekt
+                    tripotay.me
                   </a>
                   .
                 </p>
@@ -319,19 +319,13 @@ export default function AboutPage() {
 
       {/* Footer */}
       <footer className="border-t bg-white mt-20">
-        <div className="container mx-auto px-4 py-8 text-center text-sm text-gray-600">
-          <p>
-            Made with ❤️ by{" "}
-            <a
-              href="https://qonekt.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary hover:underline"
-            >
-              a.emetil
+        <div className="container mx-auto px-4 py-8 text-center text-sm text-gray-400">
+          <p>Built &amp; designed by{" "}
+            <a href="https://aemetil.github.io" target="_blank" rel="noopener noreferrer" className="hover:text-gray-600 inline-flex items-center gap-0.5">
+              aemetil<svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-0.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
             </a>
           </p>
-          <p className="mt-2">© 2026 Synkro. Tous droits réservés.</p>
+          <p className="mt-1">© 2026 Synkro. Tous droits réservés.</p>
         </div>
       </footer>
     </div>

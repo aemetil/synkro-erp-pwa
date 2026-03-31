@@ -13,9 +13,9 @@ export default function ContactPage() {
       {/* Header */}
       <header className="border-b bg-white">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" >
+          <Link href="/" className="flex items-center gap-2">
             <Image src="/logos/s_logo.png" alt="S" width={32} height={32} />
-            <Image src="/logos/synkro_blue_logo.png" alt="Synkro" width={100} height={30} className="hidden md:block" />
+            <span className="font-bold text-lg text-blue-600">Synkro</span>
           </Link>
           <Link href="/">
             <Button variant="outline" size="sm">
@@ -31,7 +31,7 @@ export default function ContactPage() {
         <div className="max-w-6xl mx-auto">
           {/* Hero */}
           <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            <h1 className="text-4xl md:text-5xl font-bold text-blue-600 mb-4">
               Contactez-nous
             </h1>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
@@ -142,7 +142,7 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <p className="font-medium text-gray-900">Téléphone</p>
-                      <p className="text-sm text-gray-600">+509 XX XX XXXX</p>
+                      <p className="text-sm text-gray-600">+509 48 36 17 52</p>
                     </div>
                   </div>
 
@@ -152,7 +152,7 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <p className="font-medium text-gray-900">Adresse</p>
-                      <p className="text-sm text-gray-600">Liancourt, Haïti</p>
+                      <p className="text-sm text-gray-600">Croix-des-missions, Haïti</p>
                     </div>
                   </div>
                 </CardContent>
@@ -197,19 +197,13 @@ export default function ContactPage() {
 
       {/* Footer */}
       <footer className="border-t bg-white mt-20">
-        <div className="container mx-auto px-4 py-8 text-center text-sm text-gray-600">
-          <p>
-            Made with ❤️ by{" "}
-            <a
-              href="https://qonekt.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary hover:underline"
-            >
-              a.emetil
+        <div className="container mx-auto px-4 py-8 text-center text-sm text-gray-400">
+          <p>Built &amp; designed by{" "}
+            <a href="https://aemetil.github.io" target="_blank" rel="noopener noreferrer" className="hover:text-gray-600 inline-flex items-center gap-0.5">
+              aemetil<svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-0.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
             </a>
           </p>
-          <p className="mt-2">© 2026 Synkro. Tous droits réservés.</p>
+          <p className="mt-1">© 2026 Synkro. Tous droits réservés.</p>
         </div>
       </footer>
     </div>
