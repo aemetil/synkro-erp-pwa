@@ -132,6 +132,35 @@ export async function updateConsultation(consultationId: string, formData: FormD
   redirect(`/sante/consultations/${consultationId}`)
 }
 
+export async function markConsultationAsPaid(consultationId: string) {
+  const session = await auth()
+
+  if (!session?.user?.entrepriseId) {
+    throw new Error("Non autorisé")
+  }
+
+  const consultation = await db.consultation.findFirst({
+    where: { id: consultationId, entrepriseId: session.user.entrepriseId },
+  })
+
+  if (!consultation) {
+    throw new Error("Consultation non trouvée")
+  }
+
+  await db.consultation.update({
+    where: { id: consultationId },
+    data: { isPaid: true },
+  })
+
+  revalidatePath(`/sante/consultations/${consultationId}`)
+  revalidatePath("/sante/consultations")
+  revalidatePath(`/sante/patients/${consultation.patientId}`)
+  revalidatePath("/sante")
+  revalidatePath("/finance")
+  revalidatePath("/dashboard")
+  revalidatePath("/reports")
+}
+
 export async function deleteConsultation(consultationId: string) {
   const session = await auth()
 

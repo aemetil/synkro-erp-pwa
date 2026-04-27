@@ -5,8 +5,9 @@ import { db } from "@/lib/db"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Building2, User, Bell, Shield, CreditCard, Tag } from "lucide-react"
+import { Building2, User, Bell, Shield, CreditCard, Tag, Coins } from "lucide-react"
 import { updateEntrepriseSector } from "./actions"
+import { CurrencySelector } from "@/components/currency-selector"
 
 export default async function SettingsPage() {
   const session = await auth()
@@ -154,6 +155,22 @@ export default async function SettingsPage() {
               </div>
               <Button type="submit">Enregistrer le secteur</Button>
             </form>
+          </CardContent>
+        </Card>
+
+        {/* Currency */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <Coins className="h-5 w-5 text-gray-600" />
+              <CardTitle>Devise</CardTitle>
+            </div>
+            <CardDescription>
+              Choisissez la devise d'affichage de vos montants
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <CurrencySelector />
           </CardContent>
         </Card>
 

@@ -46,7 +46,7 @@ export function Header({ user, onMenuClick }: HeaderProps) {
       </div>
 
       <div className="flex items-center gap-4">
-        <CurrencySwitch />
+        {/* Réservé pour le sélecteur de langue à venir */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="relative h-10 w-10 rounded-full">

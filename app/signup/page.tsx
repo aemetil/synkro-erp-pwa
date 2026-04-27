@@ -3,6 +3,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { CURRENCIES, type Currency } from "@/components/currency-provider"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -15,6 +16,7 @@ export default function SignupPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
+  const [currency, setCurrency] = useState<Currency>("HTG")
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -27,7 +29,7 @@ export default function SignupPage() {
       const result = await createAccount(formData)
 
       if (result.success) {
-        // Redirect to login with success message
+        localStorage.setItem("preferred-currency", currency)
         router.push("/login?registered=true")
       } else {
         setError(result.error || "Une erreur est survenue")
@@ -44,8 +46,10 @@ export default function SignupPage() {
       <Card className="w-full max-w-2xl">
         <CardHeader className="space-y-1">
           <div className="flex items-center justify-center gap-2 mb-2">
-            <Image src="/logos/s_logo.png" alt="S" width={36} height={36} priority />
-            <span className="font-bold text-xl text-blue-600">Synkro</span>
+            <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+              <Image src="/logos/s_logo.png" alt="S" width={36} height={36} priority />
+              <span className="font-bold text-xl text-blue-600">Synkro</span>
+            </Link>
           </div>
           <CardTitle className="text-2xl font-bold text-center">
             Créer un compte
@@ -126,6 +130,24 @@ export default function SignupPage() {
                   <option value="AUTRE">Tous les modules (Recommandé)</option>
                   <option value="COMMERCE">Commerce uniquement</option>
                   <option value="SANTE">Santé uniquement</option>
+                </select>
+                <p className="text-xs text-gray-500">
+                  Vous pourrez modifier ce paramètre plus tard dans les paramètres
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="currency">Devise principale</Label>
+                <select
+                  id="currency"
+                  value={currency}
+                  onChange={(e) => setCurrency(e.target.value as Currency)}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  disabled={loading}
+                >
+                  {CURRENCIES.map((c) => (
+                    <option key={c.value} value={c.value}>{c.label}</option>
+                  ))}
                 </select>
                 <p className="text-xs text-gray-500">
                   Vous pourrez modifier ce paramètre plus tard dans les paramètres

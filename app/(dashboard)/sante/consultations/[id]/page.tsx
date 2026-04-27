@@ -4,9 +4,10 @@ import { db } from "@/lib/db"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import Link from "next/link"
-import { ArrowLeft, User } from "lucide-react"
+import { ArrowLeft, User, CheckCircle } from "lucide-react"
 import { notFound } from "next/navigation"
 import { CurrencyAmount } from "@/components/currency-amount"
+import { markConsultationAsPaid } from "../actions"
 
 export default async function ConsultationDetailPage({
   params,
@@ -191,6 +192,14 @@ export default async function ConsultationDetailPage({
                 {consultation.isPaid ? "Payé" : "Impayé"}
               </span>
             </div>
+            {!consultation.isPaid && (
+              <form action={markConsultationAsPaid.bind(null, consultation.id)}>
+                <Button type="submit" className="w-full mt-2" variant="outline">
+                  <CheckCircle className="h-4 w-4 mr-2 text-green-600" />
+                  Marquer comme payé
+                </Button>
+              </form>
+            )}
           </CardContent>
         </Card>
 
