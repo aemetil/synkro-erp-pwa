@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation"
 import { useEffect } from "react"
 import { cn } from "@/lib/utils"
 import { LayoutDashboard, DollarSign, ShoppingCart, Users, Settings, FileText, Package, Heart, X } from "lucide-react"
+import { BugReportModal } from "@/components/bug-report-modal"
 
 interface SidebarProps {
   sector?: string | null
@@ -63,6 +64,10 @@ export function Sidebar({ sector, isOpen, onClose }: SidebarProps) {
           )
         })}
       </nav>
+
+      <div className="px-4 pb-3">
+        <BugReportModal />
+      </div>
 
       <div className="border-t p-4">
         <div className="text-xs text-gray-400 space-y-1">
