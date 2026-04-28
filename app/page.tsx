@@ -14,9 +14,22 @@ import {
   CheckCircle2,
 } from "lucide-react"
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "Synkro",
+  applicationCategory: "BusinessApplication",
+  operatingSystem: "Web",
+  url: "https://synkro.app",
+  description: "Solution de gestion complète pour PME et indépendants en Haïti. Finance, ventes, clients, stock et santé.",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD", description: "Essai gratuit disponible" },
+  creator: { "@type": "Organization", name: "Synkro", url: "https://synkro.app" },
+}
+
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       {/* Header */}
       <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">

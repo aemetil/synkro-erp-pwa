@@ -27,3 +27,11 @@ feat: devises multiples + UX login/signup + consultation payée
 - Version 1.2.1 mise à jour sur la landing page
   EOF
   )"
+
+git commit -m "$(cat <<'EOF'
+feat: formulaire de signalement de bug bilingue FR/HT
+
+- Nouveau modal bug-report avec createPortal (centré, backdrop flou)
+- Champs email, catégorie et description + validation custom FR/HT
+- API /api/bug-report via Resend
+- Trigger déplacé au-dessus de la barre dans la sidebar)"
