@@ -6,6 +6,7 @@ import { db } from "@/lib/db"
 import { generateConsultationNumber } from "@/lib/utils"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
+import { getPostHogClient } from "@/lib/posthog-server"
 
 export async function createConsultation(formData: FormData) {
   const session = await auth()
@@ -57,6 +58,18 @@ export async function createConsultation(formData: FormData) {
       entrepriseId: session.user.entrepriseId,
     },
   })
+
+  const posthog = getPostHogClient()
+  posthog.capture({
+    distinctId: session.user.email!,
+    event: "consultation_created",
+    properties: {
+      consultation_number: consultationNumber,
+      fee,
+      is_paid: isPaid,
+    },
+  })
+  await posthog.shutdown()
 
   revalidatePath("/sante/consultations")
   revalidatePath(`/sante/patients/${patientId}`)
@@ -151,6 +164,17 @@ export async function markConsultationAsPaid(consultationId: string) {
     where: { id: consultationId },
     data: { isPaid: true },
   })
+
+  const posthog = getPostHogClient()
+  posthog.capture({
+    distinctId: session.user.email!,
+    event: "consultation_paid",
+    properties: {
+      consultation_id: consultationId,
+      fee: consultation.fee,
+    },
+  })
+  await posthog.shutdown()
 
   revalidatePath(`/sante/consultations/${consultationId}`)
   revalidatePath("/sante/consultations")

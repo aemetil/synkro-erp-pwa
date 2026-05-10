@@ -4,6 +4,7 @@ import { db } from "@/lib/db"
 import { auth } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { revalidatePath } from "next/cache"
+import { getPostHogClient } from "@/lib/posthog-server"
 
 export async function createSale(formData: FormData) {
   const session = await auth()
@@ -26,30 +27,45 @@ export async function createSale(formData: FormData) {
   const total = subtotal + taxAmount - discount
   const paidAmount = paymentStatus === "PAID" ? total : 0
 
-  // Générer le numéro de vente unique par entreprise
-  const salesCount = await db.sale.count({
-    where: { entrepriseId: session.user.entrepriseId },
-  })
-  const companyTag = session.user.entrepriseId.slice(-6).toUpperCase()
-  const saleNumber = `SALE-${companyTag}-${new Date().getFullYear()}-${String(salesCount + 1).padStart(4, "0")}`
+  // Créer la vente dans une transaction pour éviter les race conditions sur le saleNumber
+  const newSale = await db.$transaction(async (tx) => {
+    // Count et create dans la même transaction
+    const salesCount = await tx.sale.count({
+      where: { entrepriseId: session.user.entrepriseId },
+    })
+    const companyTag = session.user.entrepriseId.slice(-6).toUpperCase()
+    const saleNumber = `SALE-${companyTag}-${new Date().getFullYear()}-${String(salesCount + 1).padStart(4, "0")}`
 
-  // Créer la vente
-  await db.sale.create({
-    data: {
-      saleNumber,
-      customerName,
-      subtotal,
-      taxAmount,
-      discount,
+    return await tx.sale.create({
+      data: {
+        saleNumber,
+        customerName,
+        subtotal,
+        taxAmount,
+        discount,
+        total,
+        paymentMethod,
+        paymentStatus,
+        paidAmount,
+        paidDate: paymentStatus === "PAID" ? new Date() : null,
+        notes: notes || null,
+        entrepriseId: session.user.entrepriseId,
+      },
+    })
+  })
+
+  const posthog = getPostHogClient()
+  posthog.capture({
+    distinctId: session.user.email!,
+    event: "sale_created",
+    properties: {
+      sale_number: newSale.saleNumber,
       total,
-      paymentMethod,
-      paymentStatus,
-      paidAmount,
-      paidDate: paymentStatus === "PAID" ? new Date() : null,
-      notes: notes || null,
-      entrepriseId: session.user.entrepriseId,
+      payment_method: paymentMethod,
+      payment_status: paymentStatus,
     },
   })
+  await posthog.shutdown()
 
   // Revalider le cache et rediriger
   revalidatePath("/sales")
@@ -87,14 +103,6 @@ export async function createSaleWithProducts(formData: FormData) {
     throw new Error("Aucun produit sélectionné")
   }
 
-  // Générer le numéro de vente unique par entreprise
-  // On inclut les 6 derniers chars de l'entrepriseId pour éviter les collisions entre entreprises
-  const salesCount = await db.sale.count({
-    where: { entrepriseId: session.user.entrepriseId },
-  })
-  const companyTag = session.user.entrepriseId.slice(-6).toUpperCase()
-  const saleNumber = `SALE-${companyTag}-${new Date().getFullYear()}-${String(salesCount + 1).padStart(4, "0")}`
-
   // Calculer le total
   const subtotal = items.reduce(
     (sum, item) => sum + item.quantity * item.unitPrice,
@@ -103,10 +111,17 @@ export async function createSaleWithProducts(formData: FormData) {
   const total = subtotal
   const paidAmount = paymentStatus === "PAID" ? total : 0
 
-  // Créer la vente avec les items ET déduire du stock dans une transaction
-  await db.$transaction(async (tx) => {
+  // Créer la vente avec les items dans une transaction pour éviter les race conditions
+  const newSale = await db.$transaction(async (tx) => {
+    // Count et create du saleNumber dans la même transaction
+    const salesCount = await tx.sale.count({
+      where: { entrepriseId: session.user.entrepriseId },
+    })
+    const companyTag = session.user.entrepriseId.slice(-6).toUpperCase()
+    const saleNumber = `SALE-${companyTag}-${new Date().getFullYear()}-${String(salesCount + 1).padStart(4, "0")}`
+
     // 1. Créer la vente
-    const newSale = await tx.sale.create({
+    const createdSale = await tx.sale.create({
       data: {
         saleNumber,
         customerName,
@@ -144,7 +159,7 @@ export async function createSaleWithProducts(formData: FormData) {
       // Créer le SaleItem
       await tx.saleItem.create({
         data: {
-          saleId: newSale.id,
+          saleId: createdSale.id,
           productId: product.id,
           name: product.name,
           quantity: item.quantity,
@@ -173,13 +188,29 @@ export async function createSaleWithProducts(formData: FormData) {
           quantity: item.quantity,
           previousStock,
           newStock,
-          reason: `Vente ${saleNumber}`,
-          reference: newSale.id,
+          reason: `Vente ${createdSale.saleNumber}`,
+          reference: createdSale.id,
           entrepriseId: session.user.entrepriseId,
         },
       })
     }
+
+    return createdSale
   })
+
+  const posthog = getPostHogClient()
+  posthog.capture({
+    distinctId: session.user.email!,
+    event: "sale_with_products_created",
+    properties: {
+      sale_number: newSale.saleNumber,
+      total,
+      item_count: items.length,
+      payment_method: paymentMethod,
+      payment_status: paymentStatus,
+    },
+  })
+  await posthog.shutdown()
 
   // Revalider le cache
   revalidatePath("/sales")
@@ -215,6 +246,18 @@ export async function createExpense(formData: FormData) {
       entrepriseId: session.user.entrepriseId,
     },
   })
+
+  const posthog = getPostHogClient()
+  posthog.capture({
+    distinctId: session.user.email!,
+    event: "expense_created",
+    properties: {
+      amount,
+      category,
+      payment_method: paymentMethod,
+    },
+  })
+  await posthog.shutdown()
 
   revalidatePath("/finance")
   revalidatePath("/dashboard")

@@ -6,6 +6,7 @@ import { db } from "@/lib/db"
 import { generatePatientNumber } from "@/lib/utils"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
+import { getPostHogClient } from "@/lib/posthog-server"
 
 export async function createPatient(formData: FormData) {
   const session = await auth()
@@ -55,6 +56,18 @@ export async function createPatient(formData: FormData) {
       entrepriseId: session.user.entrepriseId,
     },
   })
+
+  const posthog = getPostHogClient()
+  posthog.capture({
+    distinctId: session.user.email!,
+    event: "patient_created",
+    properties: {
+      patient_number: patientNumber,
+      gender,
+      has_insurance: !!insuranceProvider,
+    },
+  })
+  await posthog.shutdown()
 
   revalidatePath("/sante/patients")
   revalidatePath("/sante")

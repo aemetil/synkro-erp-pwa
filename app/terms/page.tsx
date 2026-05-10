@@ -11,7 +11,7 @@ export default function TermsPage() {
       <header className="border-b bg-white">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <Image src="/logos/s_logo.png" alt="S" width={32} height={32} />
+            <Image src="/logos/s_logo.png" alt="S" width={32} height={32} style={{ width: 'auto', height: 'auto' }} />
             <span className="font-bold text-lg text-blue-600">Synkro</span>
           </Link>
           <Link href="/">

@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
+import { getPostHogClient } from "@/lib/posthog-server"
 
 export async function createAppointment(formData: FormData) {
   const session = await auth()
@@ -32,6 +33,17 @@ export async function createAppointment(formData: FormData) {
       entrepriseId: session.user.entrepriseId,
     },
   })
+
+  const posthog = getPostHogClient()
+  posthog.capture({
+    distinctId: session.user.email!,
+    event: "appointment_created",
+    properties: {
+      type,
+      duration_minutes: duration,
+    },
+  })
+  await posthog.shutdown()
 
   revalidatePath("/sante/appointments")
   revalidatePath(`/sante/patients/${patientId}`)
@@ -136,6 +148,18 @@ export async function updateAppointmentStatus(
     where: { id: appointmentId },
     data: { status },
   })
+
+  const posthog = getPostHogClient()
+  posthog.capture({
+    distinctId: session.user.email!,
+    event: "appointment_status_updated",
+    properties: {
+      appointment_id: appointmentId,
+      status,
+      previous_status: appointment.status,
+    },
+  })
+  await posthog.shutdown()
 
   revalidatePath("/sante/appointments")
   revalidatePath(`/sante/patients/${appointment.patientId}`)

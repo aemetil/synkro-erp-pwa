@@ -34,7 +34,7 @@ export default function LandingPage() {
       <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Image src="/logos/s_logo.png" alt="S" width={32} height={32} priority />
+            <Image src="/logos/s_logo.png" alt="S" width={32} height={32} priority style={{ width: 'auto', height: 'auto' }} />
             <span className="font-bold text-lg text-blue-600 hidden md:block">Synkro</span>
           </div>
           <nav className="hidden md:flex items-center gap-6">
@@ -280,7 +280,7 @@ export default function LandingPage() {
           <div className="grid md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <Image src="/logos/s_logo.png" alt="S" width={28} height={28} />
+                <Image src="/logos/s_logo.png" alt="S" width={28} height={28} style={{ width: 'auto', height: 'auto' }} />
                 <span className="font-bold text-base text-blue-600">Synkro</span>
               </div>
               <p className="text-sm text-gray-600">

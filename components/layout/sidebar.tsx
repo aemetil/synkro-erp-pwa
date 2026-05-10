@@ -42,7 +42,7 @@ export function Sidebar({ sector, isOpen, onClose }: SidebarProps) {
     )}>
       <div className="flex h-16 items-center justify-between border-b px-6">
         <Link href="/dashboard" className="flex items-center gap-2">
-          <Image src="/logos/s_logo.png" alt="S" width={32} height={32} priority />
+          <Image src="/logos/s_logo.png" alt="S" width={32} height={32} priority style={{ width: 'auto', height: 'auto' }} />
           <span className="font-bold text-lg text-blue-600">Synkro</span>
         </Link>
         <button className="lg:hidden p-1 rounded text-gray-400 hover:text-gray-600" onClick={onClose} aria-label="Fermer">

@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card"
+import posthog from "posthog-js"
 
 function LoginForm() {
   const router = useRouter()
@@ -36,12 +37,16 @@ function LoginForm() {
 
       if (result?.error) {
         setError(result.error)
+        posthog.capture("login_failed", { error: result.error })
       } else {
+        posthog.identify(email, { email })
+        posthog.capture("login_succeeded")
         router.push(callbackUrl)
         router.refresh()
       }
     } catch (error) {
       setError("Une erreur est survenue")
+      posthog.captureException(error)
     } finally {
       setLoading(false)
     }
@@ -53,7 +58,7 @@ function LoginForm() {
         <CardHeader className="space-y-1">
           <div className="flex items-center justify-center gap-2 mb-2">
             <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <Image src="/logos/s_logo.png" alt="S" width={36} height={36} priority />
+              <Image src="/logos/s_logo.png" alt="S" width={36} height={36} priority style={{ width: 'auto', height: 'auto' }} />
               <span className="font-bold text-xl text-blue-600">Synkro</span>
             </Link>
           </div>

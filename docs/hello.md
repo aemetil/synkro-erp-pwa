@@ -35,3 +35,7 @@ feat: formulaire de signalement de bug bilingue FR/HT
 - Champs email, catégorie et description + validation custom FR/HT
 - API /api/bug-report via Resend
 - Trigger déplacé au-dessus de la barre dans la sidebar)"
+
+### Base de données
+
+> npm run db:studio

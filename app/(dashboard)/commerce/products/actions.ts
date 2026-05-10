@@ -7,6 +7,7 @@ import { generateProductCode } from "@/lib/utils"
 import { adjustStock } from "@/lib/stock-manager"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
+import { getPostHogClient } from "@/lib/posthog-server"
 
 export async function createProduct(formData: FormData) {
   const session = await auth()
@@ -66,6 +67,19 @@ export async function createProduct(formData: FormData) {
       },
     })
   }
+
+  const posthog = getPostHogClient()
+  posthog.capture({
+    distinctId: session.user.email!,
+    event: "product_created",
+    properties: {
+      product_code: productCode,
+      selling_price: sellingPrice,
+      initial_stock: currentStock,
+      unit,
+    },
+  })
+  await posthog.shutdown()
 
   revalidatePath("/commerce/products")
   revalidatePath("/commerce")
@@ -181,6 +195,19 @@ export async function adjustProductStock(productId: string, formData: FormData) 
     reference: `ADJ-${Date.now()}`,
     entrepriseId: session.user.entrepriseId,
   })
+
+  const posthog = getPostHogClient()
+  posthog.capture({
+    distinctId: session.user.email!,
+    event: "stock_adjusted",
+    properties: {
+      product_id: productId,
+      adjustment,
+      direction: type,
+      reason,
+    },
+  })
+  await posthog.shutdown()
 
   revalidatePath(`/commerce/products/${productId}/edit`)
   revalidatePath("/commerce/products")
