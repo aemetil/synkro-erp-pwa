@@ -58,4 +58,4 @@ MIT
 
 ---
 
-Made with ❤️ by [a.emetil](https://qonekt.com) & b.odnis
+Built & design by [aemetil](https://getappy.io)
