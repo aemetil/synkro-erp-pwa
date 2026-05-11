@@ -5,6 +5,13 @@ import { auth } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { revalidatePath } from "next/cache"
 import { getPostHogClient } from "@/lib/posthog-server"
+import { Prisma } from "@prisma/client"
+
+async function generateSaleNumber(entrepriseId: string): Promise<string> {
+  const count = await db.sale.count({ where: { entrepriseId } })
+  const tag = entrepriseId.slice(-6).toUpperCase()
+  return `SALE-${tag}-${new Date().getFullYear()}-${String(count + 1).padStart(4, "0")}`
+}
 
 export async function createSale(formData: FormData) {
   const session = await auth()
@@ -27,39 +34,41 @@ export async function createSale(formData: FormData) {
   const total = subtotal + taxAmount - discount
   const paidAmount = paymentStatus === "PAID" ? total : 0
 
-  // Créer la vente dans une transaction pour éviter les race conditions sur le saleNumber
-  const newSale = await db.$transaction(async (tx) => {
-    // Count et create dans la même transaction
-    const salesCount = await tx.sale.count({
-      where: { entrepriseId: session.user.entrepriseId },
-    })
-    const companyTag = session.user.entrepriseId.slice(-6).toUpperCase()
-    const saleNumber = `SALE-${companyTag}-${new Date().getFullYear()}-${String(salesCount + 1).padStart(4, "0")}`
-
-    return await tx.sale.create({
-      data: {
-        saleNumber,
-        customerName,
-        subtotal,
-        taxAmount,
-        discount,
-        total,
-        paymentMethod,
-        paymentStatus,
-        paidAmount,
-        paidDate: paymentStatus === "PAID" ? new Date() : null,
-        notes: notes || null,
-        entrepriseId: session.user.entrepriseId,
-      },
-    })
-  })
+  let saleNumber = ""
+  for (let attempt = 0; attempt < 5; attempt++) {
+    saleNumber = await generateSaleNumber(session.user.entrepriseId)
+    try {
+      await db.sale.create({
+        data: {
+          saleNumber,
+          customerName,
+          subtotal,
+          taxAmount,
+          discount,
+          total,
+          paymentMethod,
+          paymentStatus,
+          paidAmount,
+          paidDate: paymentStatus === "PAID" ? new Date() : null,
+          notes: notes || null,
+          entrepriseId: session.user.entrepriseId,
+        },
+      })
+      break
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002" && attempt < 4) {
+        continue
+      }
+      throw e
+    }
+  }
 
   const posthog = getPostHogClient()
   posthog.capture({
     distinctId: session.user.email!,
     event: "sale_created",
     properties: {
-      sale_number: newSale.saleNumber,
+      sale_number: saleNumber,
       total,
       payment_method: paymentMethod,
       payment_status: paymentStatus,
@@ -111,32 +120,28 @@ export async function createSaleWithProducts(formData: FormData) {
   const total = subtotal
   const paidAmount = paymentStatus === "PAID" ? total : 0
 
-  // Créer la vente avec les items dans une transaction pour éviter les race conditions
-  const newSale = await db.$transaction(async (tx) => {
-    // Count et create du saleNumber dans la même transaction
-    const salesCount = await tx.sale.count({
-      where: { entrepriseId: session.user.entrepriseId },
-    })
-    const companyTag = session.user.entrepriseId.slice(-6).toUpperCase()
-    const saleNumber = `SALE-${companyTag}-${new Date().getFullYear()}-${String(salesCount + 1).padStart(4, "0")}`
-
-    // 1. Créer la vente
-    const createdSale = await tx.sale.create({
-      data: {
-        saleNumber,
-        customerName,
-        subtotal,
-        taxAmount: 0,
-        discount: 0,
-        total,
-        paymentMethod,
-        paymentStatus,
-        paidAmount,
-        paidDate: paymentStatus === "PAID" ? new Date() : null,
-        notes: notes || null,
-        entrepriseId: session.user.entrepriseId,
-      },
-    })
+  let saleNumber = ""
+  for (let attempt = 0; attempt < 5; attempt++) {
+    saleNumber = await generateSaleNumber(session.user.entrepriseId)
+    try {
+      await db.$transaction(async (tx) => {
+        // 1. Créer la vente
+        const newSale = await tx.sale.create({
+          data: {
+            saleNumber,
+            customerName,
+            subtotal,
+            taxAmount: 0,
+            discount: 0,
+            total,
+            paymentMethod,
+            paymentStatus,
+            paidAmount,
+            paidDate: paymentStatus === "PAID" ? new Date() : null,
+            notes: notes || null,
+            entrepriseId: session.user.entrepriseId,
+          },
+        })
 
     // 2. Créer les SaleItems et déduire du stock
     for (const item of items) {
@@ -159,7 +164,7 @@ export async function createSaleWithProducts(formData: FormData) {
       // Créer le SaleItem
       await tx.saleItem.create({
         data: {
-          saleId: createdSale.id,
+          saleId: newSale.id,
           productId: product.id,
           name: product.name,
           quantity: item.quantity,
@@ -188,22 +193,28 @@ export async function createSaleWithProducts(formData: FormData) {
           quantity: item.quantity,
           previousStock,
           newStock,
-          reason: `Vente ${createdSale.saleNumber}`,
-          reference: createdSale.id,
+          reason: `Vente ${saleNumber}`,
+          reference: newSale.id,
           entrepriseId: session.user.entrepriseId,
         },
       })
     }
-
-    return createdSale
-  })
+    })
+    break
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002" && attempt < 4) {
+      continue
+    }
+    throw e
+  }
+}
 
   const posthog = getPostHogClient()
   posthog.capture({
     distinctId: session.user.email!,
     event: "sale_with_products_created",
     properties: {
-      sale_number: newSale.saleNumber,
+      sale_number: saleNumber,
       total,
       item_count: items.length,
       payment_method: paymentMethod,

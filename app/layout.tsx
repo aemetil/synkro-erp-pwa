@@ -6,7 +6,7 @@ import { Providers } from "@/components/providers"
 
 const inter = Inter({ subsets: ["latin"] })
 
-const siteUrl = "https://synkro.app"
+const siteUrl = "https://getsynkro.app"
 const siteDescription = "Solution de gestion complète pour PME et indépendants en Haïti. Finance, ventes, clients, stock et santé — tout en un."
 
 export const metadata: Metadata = {
