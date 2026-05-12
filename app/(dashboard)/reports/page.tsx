@@ -2,7 +2,6 @@
 import { auth } from "@/lib/auth"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { db } from "@/lib/db"
-import { formatCurrency } from "@/lib/utils"
 import { CurrencyAmount } from "@/components/currency-amount"
 import { Button } from "@/components/ui/button"
 import { Download, Calendar, TrendingUp, TrendingDown } from "lucide-react"
@@ -85,13 +84,15 @@ export default async function ReportsPage() {
           </p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline">
+          <Button variant="outline" disabled className="opacity-60 cursor-not-allowed">
             <Calendar className="h-4 w-4 mr-2" />
             Période
+            <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded-full">Bientôt</span>
           </Button>
-          <Button variant="outline">
+          <Button variant="outline" disabled className="opacity-60 cursor-not-allowed">
             <Download className="h-4 w-4 mr-2" />
             Exporter
+            <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded-full">Bientôt</span>
           </Button>
         </div>
       </div>

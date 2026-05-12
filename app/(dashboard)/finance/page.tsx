@@ -732,7 +732,10 @@ export default async function FinancePage() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle>Dépenses récentes</CardTitle>
-              <Button variant="ghost" size="sm">Voir tout</Button>
+              <Button variant="ghost" size="sm" disabled className="opacity-60 cursor-not-allowed">
+                Voir tout
+                <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded-full">Bientôt</span>
+              </Button>
             </div>
           </CardHeader>
           <CardContent>
