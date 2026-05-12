@@ -8,9 +8,24 @@ import { getPostHogClient } from "@/lib/posthog-server"
 import { Prisma } from "@prisma/client"
 
 async function generateSaleNumber(entrepriseId: string): Promise<string> {
-  const count = await db.sale.count({ where: { entrepriseId } })
   const tag = entrepriseId.slice(-6).toUpperCase()
-  return `SALE-${tag}-${new Date().getFullYear()}-${String(count + 1).padStart(4, "0")}`
+  const year = new Date().getFullYear()
+  const prefix = `SALE-${tag}-${year}-`
+
+  const lastSale = await db.sale.findFirst({
+    where: { entrepriseId, saleNumber: { startsWith: prefix } },
+    orderBy: { saleNumber: "desc" },
+    select: { saleNumber: true },
+  })
+
+  let nextNum = 1
+  if (lastSale) {
+    const parts = lastSale.saleNumber.split("-")
+    const lastNum = parseInt(parts[parts.length - 1], 10)
+    nextNum = (isNaN(lastNum) ? 0 : lastNum) + 1
+  }
+
+  return `${prefix}${String(nextNum).padStart(4, "0")}`
 }
 
 export async function createSale(formData: FormData) {
