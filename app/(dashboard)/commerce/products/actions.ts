@@ -212,4 +212,5 @@ export async function adjustProductStock(productId: string, formData: FormData) 
   revalidatePath(`/commerce/products/${productId}/edit`)
   revalidatePath("/commerce/products")
   revalidatePath("/commerce")
+  redirect(`/commerce/products/${productId}/edit`)
 }

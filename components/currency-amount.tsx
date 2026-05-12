@@ -10,5 +10,5 @@ interface CurrencyAmountProps {
 export function CurrencyAmount({ amount, className }: CurrencyAmountProps) {
   const { formatAmount } = useCurrency()
 
-  return <span className={className}>{formatAmount(amount)}</span>
+  return <span className={className} suppressHydrationWarning>{formatAmount(amount)}</span>
 }
