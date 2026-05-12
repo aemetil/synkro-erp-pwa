@@ -12,8 +12,9 @@ import { markConsultationAsPaid } from "../actions"
 export default async function ConsultationDetailPage({
   params,
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }) {
+  const { id } = await params
   const session = await auth()
 
   if (!session?.user?.entrepriseId) {
@@ -22,7 +23,7 @@ export default async function ConsultationDetailPage({
 
   const consultation = await db.consultation.findFirst({
     where: {
-      id: params.id,
+      id,
       entrepriseId: session.user.entrepriseId,
     },
     include: {

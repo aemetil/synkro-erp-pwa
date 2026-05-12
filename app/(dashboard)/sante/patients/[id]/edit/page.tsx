@@ -14,8 +14,9 @@ import { DeleteButton } from "@/components/delete-button"
 export default async function EditPatientPage({
   params,
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }) {
+  const { id } = await params
   const session = await auth()
 
   if (!session?.user?.entrepriseId) {
@@ -24,7 +25,7 @@ export default async function EditPatientPage({
 
   const patient = await db.patient.findFirst({
     where: {
-      id: params.id,
+      id,
       entrepriseId: session.user.entrepriseId,
     },
   })

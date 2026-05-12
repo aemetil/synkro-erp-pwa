@@ -12,7 +12,8 @@ import { notFound } from "next/navigation"
 import { DeleteButton } from "@/components/delete-button"
 import { CurrencyLabel } from "@/components/currency-label"
 
-export default async function EditSalePage({ params }: { params: { id: string } }) {
+export default async function EditSalePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const session = await auth()
 
   if (!session?.user?.entrepriseId) {
@@ -21,7 +22,7 @@ export default async function EditSalePage({ params }: { params: { id: string } 
 
   const sale = await db.sale.findFirst({
     where: {
-      id: params.id,
+      id,
       entrepriseId: session.user.entrepriseId,
     },
   })

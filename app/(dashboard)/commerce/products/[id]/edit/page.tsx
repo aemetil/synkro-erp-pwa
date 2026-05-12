@@ -15,8 +15,9 @@ import { CurrencyLabel } from "@/components/currency-label"
 export default async function EditProductPage({
   params,
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }) {
+  const { id } = await params
   const session = await auth()
 
   if (!session?.user?.entrepriseId) {
@@ -26,7 +27,7 @@ export default async function EditProductPage({
   // Get product
   const product = await db.product.findFirst({
     where: {
-      id: params.id,
+      id,
       entrepriseId: session.user.entrepriseId,
     },
     include: {
