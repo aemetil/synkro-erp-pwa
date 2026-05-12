@@ -84,16 +84,20 @@ export default async function ReportsPage() {
           </p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" disabled className="opacity-60 cursor-not-allowed">
-            <Calendar className="h-4 w-4 mr-2" />
-            Période
-            <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded-full">Bientôt</span>
-          </Button>
-          <Button variant="outline" disabled className="opacity-60 cursor-not-allowed">
-            <Download className="h-4 w-4 mr-2" />
-            Exporter
-            <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded-full">Bientôt</span>
-          </Button>
+          <div className="relative inline-flex">
+            <Button variant="outline" disabled className="opacity-60 cursor-not-allowed">
+              <Calendar className="h-4 w-4 mr-2" />
+              Période
+            </Button>
+            <span className="absolute -top-2 -right-2 text-[10px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-full font-medium leading-none whitespace-nowrap">Bientôt</span>
+          </div>
+          <div className="relative inline-flex">
+            <Button variant="outline" disabled className="opacity-60 cursor-not-allowed">
+              <Download className="h-4 w-4 mr-2" />
+              Exporter
+            </Button>
+            <span className="absolute -top-2 -right-2 text-[10px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-full font-medium leading-none whitespace-nowrap">Bientôt</span>
+          </div>
         </div>
       </div>
 

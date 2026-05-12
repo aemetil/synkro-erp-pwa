@@ -3,7 +3,7 @@ import { auth } from "@/lib/auth"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { db } from "@/lib/db"
 import { CurrencyAmount } from "@/components/currency-amount"
-import { DollarSign, TrendingUp, TrendingDown, Calendar, Plus, Pencil } from "lucide-react"
+import { DollarSign, TrendingUp, TrendingDown, Calendar, Plus, Pencil, Download } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 
@@ -363,10 +363,13 @@ export default async function FinancePage() {
               <span className="hidden md:inline ml-2">Nouvelle dépense</span>
             </Button>
           </Link>
-          <Button variant="outline" size="sm" className="hidden md:flex">
-            <Calendar className="h-4 w-4 mr-2" />
-            Exporter
-          </Button>
+          <div className="relative hidden md:inline-flex">
+            <Button variant="outline" size="sm" disabled className="opacity-60 cursor-not-allowed">
+              <Download className="h-4 w-4 mr-2" />
+              Exporter
+            </Button>
+            <span className="absolute -top-2 -right-2 text-[10px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-full font-medium leading-none whitespace-nowrap">Bientôt</span>
+          </div>
         </div>
       </div>
 
@@ -732,10 +735,12 @@ export default async function FinancePage() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle>Dépenses récentes</CardTitle>
-              <Button variant="ghost" size="sm" disabled className="opacity-60 cursor-not-allowed">
-                Voir tout
-                <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded-full">Bientôt</span>
-              </Button>
+              <div className="relative inline-flex">
+                <Button variant="ghost" size="sm" disabled className="opacity-60 cursor-not-allowed">
+                  Voir tout
+                </Button>
+                <span className="absolute -top-2 -right-2 text-[10px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-full font-medium leading-none whitespace-nowrap">Bientôt</span>
+              </div>
             </div>
           </CardHeader>
           <CardContent>
