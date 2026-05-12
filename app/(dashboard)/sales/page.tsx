@@ -93,14 +93,14 @@ export default async function SalesPage() {
               <table className="w-full">
                 <thead className="border-b bg-gray-50">
                   <tr className="text-left">
-                    <th className="py-2 px-3 md:py-3 md:px-0 text-xs font-medium text-gray-500 uppercase tracking-wide">N°</th>
+                    <th className="py-2 px-3 md:py-3 md:px-0 text-xs font-medium text-gray-500 uppercase tracking-wide hidden md:table-cell">N°</th>
                     <th className="py-2 px-3 md:py-3 md:px-2 text-xs font-medium text-gray-500 uppercase tracking-wide">Client</th>
                     <th className="py-2 px-3 md:py-3 md:px-2 text-xs font-medium text-gray-500 uppercase tracking-wide hidden md:table-cell">Date</th>
                     <th className="py-2 px-3 md:py-3 md:px-2 text-xs font-medium text-gray-500 uppercase tracking-wide">Montant</th>
                     <th className="py-2 px-3 md:py-3 md:px-2 text-xs font-medium text-gray-500 uppercase tracking-wide hidden md:table-cell">Payé</th>
                     <th className="py-2 px-3 md:py-3 md:px-2 text-xs font-medium text-gray-500 uppercase tracking-wide">Statut</th>
                     <th className="py-2 px-3 md:py-3 md:px-2 text-xs font-medium text-gray-500 uppercase tracking-wide hidden md:table-cell">Paiement</th>
-                    <th className="py-2 px-3 md:py-3 md:px-2 text-xs font-medium text-gray-500 uppercase tracking-wide"></th>
+                    <th className="py-2 px-3 md:py-3 md:px-2 text-xs font-medium text-gray-500 uppercase tracking-wide">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -108,7 +108,7 @@ export default async function SalesPage() {
                     const status = STATUS_LABEL[sale.paymentStatus] ?? { label: sale.paymentStatus, short: sale.paymentStatus, color: "bg-gray-100 text-gray-800" }
                     return (
                       <tr key={sale.id} className="hover:bg-gray-50">
-                        <td className="py-2.5 px-3 md:py-4 md:px-0 text-xs md:text-sm font-medium whitespace-nowrap">{sale.saleNumber}</td>
+                        <td className="py-2.5 px-3 md:py-4 md:px-0 text-xs md:text-sm font-medium whitespace-nowrap hidden md:table-cell">{sale.saleNumber}</td>
                         <td className="py-2.5 px-3 md:py-4 md:px-2 text-xs md:text-sm">
                           <span className="block max-w-[70px] md:max-w-none truncate">{sale.customerName || "-"}</span>
                         </td>
