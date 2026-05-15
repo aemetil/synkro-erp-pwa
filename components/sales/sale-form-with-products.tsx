@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useTransition } from "react"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -27,14 +28,40 @@ type SaleItem = {
 type Props = {
   products: Product[]
   onSubmit: (data: FormData) => Promise<void>
+  initialSale?: {
+    customerName?: string | null
+    paymentMethod: string
+    paymentStatus: string
+    notes?: string | null
+    items: SaleItem[]
+  }
+  submitLabel?: string
+  pendingLabel?: string
+  cancelHref?: string
 }
 
-export function SaleFormWithProducts({ products, onSubmit }: Props) {
-  const [items, setItems] = useState<SaleItem[]>([])
-  const [customerName, setCustomerName] = useState("")
-  const [paymentMethod, setPaymentMethod] = useState("CASH")
-  const [paymentStatus, setPaymentStatus] = useState("PAID")
-  const [notes, setNotes] = useState("")
+function isNextRedirectError(err: unknown) {
+  if (!err || typeof err !== "object") return false
+
+  const digest = "digest" in err ? String(err.digest) : ""
+  const message = err instanceof Error ? err.message : ""
+
+  return digest.startsWith("NEXT_REDIRECT") || message === "NEXT_REDIRECT"
+}
+
+export function SaleFormWithProducts({
+  products,
+  onSubmit,
+  initialSale,
+  submitLabel = "Créer la vente",
+  pendingLabel = "Création en cours...",
+  cancelHref = "/sales",
+}: Props) {
+  const [items, setItems] = useState<SaleItem[]>(initialSale?.items ?? [])
+  const [customerName, setCustomerName] = useState(initialSale?.customerName ?? "")
+  const [paymentMethod, setPaymentMethod] = useState(initialSale?.paymentMethod ?? "CASH")
+  const [paymentStatus, setPaymentStatus] = useState(initialSale?.paymentStatus ?? "PAID")
+  const [notes, setNotes] = useState(initialSale?.notes ?? "")
   const [error, setError] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
 
@@ -122,6 +149,10 @@ export function SaleFormWithProducts({ products, onSubmit }: Props) {
       try {
         await onSubmit(formData)
       } catch (err: unknown) {
+        if (isNextRedirectError(err)) {
+          throw err
+        }
+
         if (err instanceof Error) {
           setError(err.message)
         } else {
@@ -334,15 +365,17 @@ export function SaleFormWithProducts({ products, onSubmit }: Props) {
           {isPending ? (
             <>
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              Création en cours...
+              {pendingLabel}
             </>
           ) : (
-            "Créer la vente"
+            submitLabel
           )}
         </Button>
-        <Button type="button" variant="outline" className="flex-1" disabled={isPending}>
-          Annuler
-        </Button>
+        <Link href={cancelHref} className="flex-1">
+          <Button type="button" variant="outline" className="w-full" disabled={isPending}>
+            Annuler
+          </Button>
+        </Link>
       </div>
     </form>
   )

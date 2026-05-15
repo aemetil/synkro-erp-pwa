@@ -342,6 +342,168 @@ export async function updateSale(saleId: string, formData: FormData) {
   redirect("/sales")
 }
 
+export async function updateSaleWithProducts(saleId: string, formData: FormData) {
+  const session = await auth()
+
+  if (!session?.user?.entrepriseId) {
+    throw new Error("Non autorisé")
+  }
+
+  const existingSale = await db.sale.findFirst({
+    where: { id: saleId, entrepriseId: session.user.entrepriseId },
+    include: { items: true },
+  })
+
+  if (!existingSale) {
+    throw new Error("Vente non trouvée")
+  }
+
+  const customerName = formData.get("customerName") as string
+  const paymentMethod = formData.get("paymentMethod") as string
+  const paymentStatus = formData.get("paymentStatus") as string
+  const notes = formData.get("notes") as string
+  const itemsJson = formData.get("items") as string
+
+  if (!itemsJson) {
+    throw new Error("Aucun produit sélectionné")
+  }
+
+  const items = JSON.parse(itemsJson) as Array<{
+    productId: string
+    quantity: number
+    unitPrice: number
+  }>
+
+  if (items.length === 0) {
+    throw new Error("Aucun produit sélectionné")
+  }
+
+  const subtotal = items.reduce(
+    (sum, item) => sum + item.quantity * item.unitPrice,
+    0
+  )
+  const total = subtotal
+  const paidAmount = paymentStatus === "PAID" ? total : 0
+
+  await db.$transaction(async (tx) => {
+    for (const oldItem of existingSale.items) {
+      if (!oldItem.productId) continue
+
+      await tx.product.updateMany({
+        where: {
+          id: oldItem.productId,
+          entrepriseId: session.user.entrepriseId,
+        },
+        data: {
+          currentStock: {
+            increment: oldItem.quantity,
+          },
+        },
+      })
+    }
+
+    await tx.saleItem.deleteMany({
+      where: { saleId },
+    })
+
+    await tx.stockMovement.deleteMany({
+      where: {
+        reference: saleId,
+        entrepriseId: session.user.entrepriseId,
+      },
+    })
+
+    await tx.sale.update({
+      where: { id: saleId },
+      data: {
+        customerName,
+        subtotal,
+        taxAmount: 0,
+        discount: 0,
+        total,
+        paymentMethod,
+        paymentStatus,
+        paidAmount,
+        paidDate:
+          paymentStatus === "PAID"
+            ? existingSale.paidDate ?? new Date()
+            : null,
+        notes: notes || null,
+      },
+    })
+
+    for (const item of items) {
+      const quantity = Number(item.quantity)
+      const unitPrice = Number(item.unitPrice)
+
+      if (!item.productId || !Number.isInteger(quantity) || quantity <= 0) {
+        throw new Error("Quantité invalide")
+      }
+
+      if (!Number.isFinite(unitPrice) || unitPrice < 0) {
+        throw new Error("Prix unitaire invalide")
+      }
+
+      const product = await tx.product.findFirst({
+        where: {
+          id: item.productId,
+          entrepriseId: session.user.entrepriseId,
+        },
+      })
+
+      if (!product) {
+        throw new Error(`Produit ${item.productId} non trouvé`)
+      }
+
+      if (product.currentStock < quantity) {
+        throw new Error(
+          `Stock insuffisant pour ${product.name}. Disponible: ${product.currentStock} ${product.unit}`
+        )
+      }
+
+      await tx.saleItem.create({
+        data: {
+          saleId,
+          productId: product.id,
+          name: product.name,
+          quantity,
+          unitPrice,
+          taxRate: 0,
+          total: quantity * unitPrice,
+        },
+      })
+
+      const previousStock = product.currentStock
+      const newStock = previousStock - quantity
+
+      await tx.product.update({
+        where: { id: product.id },
+        data: { currentStock: newStock },
+      })
+
+      await tx.stockMovement.create({
+        data: {
+          productId: product.id,
+          type: "OUT",
+          quantity,
+          previousStock,
+          newStock,
+          reason: `Modification vente ${existingSale.saleNumber}`,
+          reference: saleId,
+          entrepriseId: session.user.entrepriseId,
+        },
+      })
+    }
+  })
+
+  revalidatePath("/sales")
+  revalidatePath("/dashboard")
+  revalidatePath("/finance")
+  revalidatePath("/commerce")
+  revalidatePath("/reports")
+  redirect("/sales")
+}
+
 export async function updateExpense(expenseId: string, formData: FormData) {
   const session = await auth()
 
