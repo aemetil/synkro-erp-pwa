@@ -32,6 +32,8 @@ Un flow plus moderne mais qui ralentit un commerçant est une régression.
 
 Une feature mieux pensée mais qui crée une confusion sur les montants est une régression.
 
+Une clarification Finance / Commerce ne doit pas transformer Synkro en logiciel comptable complet. L’objectif est une gestion plus juste et simple, pas une comptabilité exhaustive.
+
 ---
 
 ## 3. Priorité absolue
@@ -57,6 +59,8 @@ Déconnexion
 ```
 
 Si l’un de ces flows casse, la priorité devient correction immédiate.
+
+Pour toute évolution du dashboard, suivre `docs/SYNKRO_SECTOR_DASHBOARD_SPEC.md` afin de préserver les priorités Commerce, Santé et Autre.
 
 ---
 
@@ -89,6 +93,15 @@ anciens flows
 anciennes routes
 ancienne logique isPaid
 anciens formats de devise
+```
+
+Ne pas renommer une route existante comme `/customers` ou `/clients` sans plan de migration explicite :
+
+```txt
+redirection
+compatibilité temporaire
+tests d’accès direct
+communication utilisateur si visible
 ```
 
 Préférer :
@@ -243,6 +256,7 @@ Les montants doivent être protégés.
 changer une logique de calcul sans tests
 changer le format devise global sans vérifier toutes les pages
 mélanger vente émise et paiement reçu
+assimiler tous les achats de stock à des dépenses opérationnelles
 modifier rétroactivement des montants existants sans trace
 ```
 
@@ -254,6 +268,7 @@ tester finance
 tester rapports
 tester détail vente
 tester clients
+tester commerce / achats / fournisseurs
 tester PDF
 tester multi-devise
 ```
@@ -725,7 +740,7 @@ vérifier nombre de ventes
 vérifier ventes payées
 vérifier ventes impayées
 vérifier consultations payées
-vérifier dashboard
+vérifier dashboard selon `docs/SYNKRO_SECTOR_DASHBOARD_SPEC.md`
 vérifier finance
 vérifier rapports
 ```
@@ -792,6 +807,16 @@ Clients
 ```
 
 ne pas changer tous les termes d’un coup.
+
+Si une terminologie métier est clarifiée, garder les repères existants et expliquer simplement :
+
+```txt
+Dépenses opérationnelles = coûts de fonctionnement
+Achats = marchandises ou stock destinés à la revente
+Encaissements = argent réellement reçu
+Créances clients = montants clients restant à payer
+Dettes fournisseurs = montants fournisseurs restant à payer
+```
 
 ### 29.3 Améliorer sans désorienter
 

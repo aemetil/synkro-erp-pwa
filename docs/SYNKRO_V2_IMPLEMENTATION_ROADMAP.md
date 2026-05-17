@@ -3,6 +3,7 @@
 > Direction : **monochrome fonctionnel**  
 > Accent principal : `#1F3A5F`  
 > Objectif : organiser l’exécution de Synkro v2 en étapes courtes, réalistes et progressives.
+> Références métier : `docs/SYNKRO_BUSINESS_MODULES_ARCHITECTURE.md`, `docs/SYNKRO_CURRENT_STATE_AUDIT.md` et `docs/SYNKRO_SECTOR_DASHBOARD_SPEC.md`.
 
 ---
 
@@ -287,10 +288,12 @@ app/(dashboard)/dashboard/page.tsx
 app/(dashboard)/sales/page.tsx
 app/(dashboard)/finance/page.tsx
 app/(dashboard)/commerce/page.tsx
-app/(dashboard)/clients/page.tsx
+app/(dashboard)/customers/page.tsx
 app/(dashboard)/reports/page.tsx
 app/(dashboard)/settings/page.tsx
 ```
+
+Note : garder le label “Clients” côté produit, mais préserver la route active `app/(dashboard)/customers/page.tsx` tant qu’aucun plan de migration n’existe.
 
 ### Critères de succès
 
@@ -399,7 +402,9 @@ Menu
 
 ### Objectif
 
-Transformer le dashboard en page utile, claire et action-first.
+Transformer le dashboard en page utile, claire, action-first et sectorielle.
+
+Référence détaillée : `docs/SYNKRO_SECTOR_DASHBOARD_SPEC.md`.
 
 ### Tâches
 
@@ -410,9 +415,11 @@ Créer section Aujourd’hui
 Créer section À suivre
 Créer activité récente en DataList mobile
 Ajouter action principale Nouvelle vente
-Adapter santé/commerce/autre
+Adapter Commerce / Santé / Autre
 Ajouter empty states utiles
 ```
+
+Le dashboard Commerce doit prioriser ventes, encaissements, paiements en attente, stock bas, Achats et Fournisseurs. Le dashboard Santé doit prioriser RDV, patients, consultations et paiements de consultation. Le dashboard Autre doit rester centré sur ventes, encaissements, dépenses opérationnelles et créances clients.
 
 ### Fichiers concernés
 
@@ -632,11 +639,13 @@ Ajouter liens vers ventes impayées/partielles
 ### Fichiers concernés
 
 ```txt
-app/(dashboard)/clients/page.tsx
-app/(dashboard)/clients/[id]/page.tsx
-components/clients/*
-lib/clients/*
+app/(dashboard)/customers/page.tsx
+app/(dashboard)/customers/[id]/page.tsx
+components/customers/*
+lib/customers/*
 ```
+
+Note route : ne pas renommer `/customers` vers `/clients` sans redirection, tests d’accès direct et communication si le changement est visible.
 
 ### Critères de succès
 
@@ -651,7 +660,7 @@ lib/clients/*
 
 ### Objectif
 
-Améliorer le module commerce autour du stock réel.
+Améliorer le module commerce autour du stock réel, des Achats, des Fournisseurs et de la Réception stock.
 
 ### Tâches
 
@@ -663,6 +672,8 @@ Créer LowStockAlert
 Améliorer historique stock
 Action ajuster stock visible
 Préparer réception fournisseur
+Préparer Achats de marchandises
+Préparer Fournisseurs
 Créer empty states utiles
 ```
 
@@ -673,6 +684,8 @@ app/(dashboard)/commerce/page.tsx
 app/(dashboard)/commerce/products/page.tsx
 app/(dashboard)/commerce/products/[id]/edit/page.tsx
 app/(dashboard)/commerce/stock/page.tsx
+app/(dashboard)/commerce/purchases/page.tsx
+app/(dashboard)/commerce/suppliers/page.tsx
 components/commerce/*
 lib/stock-manager.ts
 ```
@@ -682,6 +695,8 @@ lib/stock-manager.ts
 - stock compréhensible ;
 - produits modifiables facilement ;
 - stock bas visible ;
+- Achats distincts des Dépenses opérationnelles ;
+- Fournisseurs préparés simplement ;
 - actions non enterrées.
 
 ---
@@ -697,6 +712,10 @@ Clarifier les chiffres importants.
 ```txt
 Distinguer ventes émises et encaissements
 Ajouter créances restantes
+Ajouter dépenses opérationnelles
+Ajouter achats de stock
+Préparer dettes fournisseurs
+Afficher bénéfice estimé avec prudence
 Simplifier rapports mobile
 Ajouter phrases explicatives
 Préparer filtre période
@@ -716,6 +735,7 @@ lib/finance/*
 ### Critères de succès
 
 - pas de confusion entre vente et cash reçu ;
+- pas de confusion entre Achats et Dépenses opérationnelles ;
 - rapports plus compréhensibles ;
 - mobile lisible ;
 - chiffres cohérents.

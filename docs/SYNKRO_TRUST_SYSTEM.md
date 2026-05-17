@@ -387,6 +387,8 @@ Objectif :
 
 Le stock est une zone de confiance importante.
 
+Les règles stock doivent suivre `docs/SYNKRO_BUSINESS_MODULES_ARCHITECTURE.md` : une Réception stock fournisseur est un achat de marchandises, pas une simple dépense opérationnelle.
+
 ### 12.1 Règle
 
 > Aucun changement de stock ne doit être invisible.
@@ -416,8 +418,9 @@ CANCELLED
 Une réception fournisseur doit créer :
 
 - mouvement stock `IN` ;
-- dépense liée ;
+- achat de stock lié ;
 - référence fournisseur ;
+- dette fournisseur ou encaissement sortant si non réglé / réglé ;
 - bon de réception.
 
 ### 12.4 UI recommandée
@@ -667,6 +670,8 @@ Cela inclut :
 - PDF ;
 - détail vente ;
 - client ;
+
+Pour les montants affichés sur le dashboard, respecter aussi `docs/SYNKRO_SECTOR_DASHBOARD_SPEC.md`.
 - reçu.
 
 ### 18.2 Recommandation

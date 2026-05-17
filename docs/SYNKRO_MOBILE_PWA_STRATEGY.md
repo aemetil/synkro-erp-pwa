@@ -4,6 +4,7 @@
 > Design : **monochrome fonctionnel**  
 > Accent principal : `#1F3A5F`  
 > Objectif : transformer la PWA Synkro en une expérience mobile qui ressemble à une vraie application native, rapide et utilisable même sur téléphones modestes et connexions instables.
+> Références métier : `docs/SYNKRO_BUSINESS_MODULES_ARCHITECTURE.md`, `docs/SYNKRO_CURRENT_STATE_AUDIT.md` et `docs/SYNKRO_SECTOR_DASHBOARD_SPEC.md`.
 
 ---
 
@@ -309,6 +310,15 @@ Clients
 Menu
 ```
 
+Le menu Commerce doit aussi donner accès simplement à :
+
+```txt
+Achats
+Fournisseurs
+Réception stock
+Stock bas
+```
+
 #### Santé
 
 ```txt
@@ -519,7 +529,15 @@ S’il ne peut pas enregistrer, expliquer pourquoi.
 
 L’accueil mobile ne doit pas être un dashboard analytique lourd.
 
-Il doit être orienté action.
+Il doit être orienté action et adapté au secteur :
+
+Référence détaillée : `docs/SYNKRO_SECTOR_DASHBOARD_SPEC.md`.
+
+```txt
+Commerce dashboard
+Santé dashboard
+Autre dashboard
+```
 
 Structure recommandée :
 
@@ -530,7 +548,7 @@ Bonjour, [Nom]
 
 Aujourd’hui
 Entrées
-Sorties
+Sorties opérationnelles
 Solde
 
 À suivre

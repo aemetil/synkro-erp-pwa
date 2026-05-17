@@ -3,6 +3,7 @@
 > Direction : **monochrome fonctionnel**  
 > Accent principal : `#1F3A5F`  
 > Objectif : construire une interface calme, fiable, mobile-first et adaptée aux PME haïtiennes.
+> Références métier : `docs/SYNKRO_BUSINESS_MODULES_ARCHITECTURE.md`, `docs/SYNKRO_CURRENT_STATE_AUDIT.md` et `docs/SYNKRO_SECTOR_DASHBOARD_SPEC.md`.
 
 ---
 
@@ -901,8 +902,10 @@ Chaque graphique important doit avoir une phrase de lecture.
 Exemple :
 
 ```txt
-En mai, vous avez vendu 715 G et dépensé 200 G.
-Votre bénéfice estimé est de 515 G.
+En mai, vous avez émis 715 G de ventes.
+Vous avez reçu 620 G en encaissements.
+Vos dépenses opérationnelles sont de 200 G.
+Vos achats de stock sont suivis séparément.
 ```
 
 ### Graphiques

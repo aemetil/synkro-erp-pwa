@@ -3,6 +3,7 @@
 > Direction : **monochrome fonctionnel**  
 > Accent principal : `#1F3A5F`  
 > Objectif : migrer progressivement Synkro du MVP actuel vers une v2 mature, fiable, mobile-first et adaptée au marché haïtien.
+> Références métier : `docs/SYNKRO_BUSINESS_MODULES_ARCHITECTURE.md`, `docs/SYNKRO_CURRENT_STATE_AUDIT.md` et `docs/SYNKRO_SECTOR_DASHBOARD_SPEC.md`.
 
 ---
 
@@ -294,10 +295,12 @@ app/(dashboard)/dashboard/page.tsx
 app/(dashboard)/sales/page.tsx
 app/(dashboard)/finance/page.tsx
 app/(dashboard)/commerce/page.tsx
-app/(dashboard)/clients/page.tsx
+app/(dashboard)/customers/page.tsx
 app/(dashboard)/reports/page.tsx
 app/(dashboard)/settings/page.tsx
 ```
+
+Note : le label produit reste “Clients”, mais la route active observée est `app/(dashboard)/customers/page.tsx`. Ne pas renommer `/customers` sans plan de migration.
 
 ## Actions
 
@@ -433,7 +436,9 @@ Menu
 
 ## Objectif
 
-Transformer le dashboard en page claire, utile et mobile-first.
+Transformer le dashboard en page claire, utile, mobile-first et adaptée au secteur.
+
+Référence détaillée : `docs/SYNKRO_SECTOR_DASHBOARD_SPEC.md`.
 
 ## Fichiers probables
 
@@ -460,6 +465,16 @@ Mobile :
 - alertes ;
 - activité récente ;
 - éviter trop de cartes.
+
+Variantes sectorielles :
+
+```txt
+Commerce dashboard
+Santé dashboard
+Autre dashboard
+```
+
+Le dashboard Commerce doit faire remonter stock bas, paiements en attente, Achats et Fournisseurs quand c’est utile. Le dashboard Santé doit prioriser patients, RDV, consultations et paiements de consultation. Le dashboard Autre doit rester plus général.
 
 ## Structure mobile recommandée
 
@@ -676,7 +691,7 @@ actions/payments/void-payment.ts
 
 ## Objectif
 
-Renforcer le module commerce autour des produits, stock et approvisionnement.
+Renforcer le module commerce autour des produits, stock, achats de marchandises, fournisseurs et approvisionnement.
 
 ## Pages
 
@@ -686,6 +701,8 @@ app/(dashboard)/commerce/products/page.tsx
 app/(dashboard)/commerce/products/new/page.tsx
 app/(dashboard)/commerce/products/[id]/edit/page.tsx
 app/(dashboard)/commerce/stock/page.tsx
+app/(dashboard)/commerce/purchases/page.tsx
+app/(dashboard)/commerce/suppliers/page.tsx
 ```
 
 ## Actions
@@ -694,7 +711,9 @@ app/(dashboard)/commerce/stock/page.tsx
 - liste produits mobile ;
 - statut stock standardisé ;
 - historique plus clair ;
-- préparer réception fournisseur ;
+- préparer Achats ;
+- préparer Fournisseurs ;
+- préparer Réception stock fournisseur ;
 - bouton ajustement stock visible ;
 - empty states utiles.
 
@@ -703,6 +722,8 @@ app/(dashboard)/commerce/stock/page.tsx
 ```txt
 SupplierReception
 PurchaseReceipt
+Supplier
+StockPurchase
 StockMovement reason
 ```
 
@@ -711,6 +732,8 @@ StockMovement reason
 - modifier produit simple ;
 - stock clair ;
 - alertes visibles ;
+- Achats distincts des Dépenses opérationnelles ;
+- Fournisseurs préparés sans complexité comptable ;
 - actions non cachées en bas.
 
 ---
@@ -724,10 +747,12 @@ Faire de la page clients un outil de suivi financier.
 ## Pages
 
 ```txt
-app/(dashboard)/clients/page.tsx
-app/(dashboard)/clients/[id]/page.tsx
-components/clients/*
+app/(dashboard)/customers/page.tsx
+app/(dashboard)/customers/[id]/page.tsx
+components/customers/*
 ```
+
+Note route : garder `/customers` comme route existante tant qu’un plan explicite de migration vers une autre URL n’est pas validé.
 
 ## Actions
 
@@ -760,7 +785,7 @@ ClientPaymentHistory
 
 ## Objectif
 
-Clarifier les chiffres.
+Clarifier les chiffres sans transformer Synkro en logiciel comptable complet.
 
 ## Pages
 
@@ -773,6 +798,9 @@ app/(dashboard)/reports/page.tsx
 
 - distinguer ventes émises et encaissements reçus ;
 - afficher créances ouvertes ;
+- distinguer dépenses opérationnelles et achats de stock ;
+- préparer dettes fournisseurs ;
+- afficher bénéfice estimé avec prudence ;
 - simplifier graphiques ;
 - ajouter phrases explicatives ;
 - préparer filtre période ;
@@ -783,8 +811,10 @@ app/(dashboard)/reports/page.tsx
 ```txt
 Chiffre d’affaires
 Encaissements reçus
-Dépenses
-Créances
+Dépenses opérationnelles
+Achats de stock
+Créances clients
+Dettes fournisseurs
 Bénéfice estimé
 ```
 
@@ -1157,7 +1187,7 @@ Après vente :
 /sales
 /finance
 /reports
-/clients
+/customers
 ```
 
 Après paiement :
@@ -1168,8 +1198,8 @@ Après paiement :
 /sales/[id]
 /finance
 /reports
-/clients
-/clients/[id]
+/customers
+/customers/[id]
 ```
 
 Après produit / stock :

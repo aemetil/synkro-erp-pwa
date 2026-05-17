@@ -939,6 +939,8 @@ Le dashboard ne doit pas être identique pour tous les secteurs.
 
 Il doit s’adapter au type d’entreprise.
 
+Référence détaillée pour les layouts, métriques, actions rapides et tests : `docs/SYNKRO_SECTOR_DASHBOARD_SPEC.md`.
+
 ---
 
 ## 14.1 Dashboard Commerce

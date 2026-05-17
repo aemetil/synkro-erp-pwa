@@ -643,7 +643,9 @@ Preferred message direction:
 
 > La gestion claire et fiable pour les PME haïtiennes.
 
-The landing should explain that Synkro helps businesses follow sales, expenses, stock, clients, payments, and receipts.
+The landing should explain that Synkro helps businesses follow sales, operational expenses, stock purchases, suppliers, clients, payments, and receipts.
+
+Use `docs/SYNKRO_BUSINESS_MODULES_ARCHITECTURE.md`, `docs/SYNKRO_CURRENT_STATE_AUDIT.md`, and `docs/SYNKRO_SECTOR_DASHBOARD_SPEC.md` as product references for finance, commerce, and sector dashboards.
 
 It should speak to users who may currently manage their business through paper, memory, WhatsApp, or scattered notes.
 

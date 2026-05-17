@@ -26,6 +26,8 @@ Synkro v2 doit respecter :
 - L’écran mobile fonctionne-t-il sans compression desktop ?
 - L’utilisateur sait-il quoi faire ensuite ?
 
+Pour les dashboards desktop et mobile, vérifier aussi `docs/SYNKRO_SECTOR_DASHBOARD_SPEC.md`.
+
 ## Anti-patterns
 
 Éviter :

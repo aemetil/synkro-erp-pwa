@@ -3,6 +3,7 @@
 > Direction : **monochrome fonctionnel**  
 > Accent principal : `#1F3A5F`  
 > Objectif : définir les composants UI fondamentaux pour construire Synkro v2 de manière cohérente, mobile-first et maintenable.
+> Références métier : `docs/SYNKRO_BUSINESS_MODULES_ARCHITECTURE.md`, `docs/SYNKRO_CURRENT_STATE_AUDIT.md` et `docs/SYNKRO_SECTOR_DASHBOARD_SPEC.md`.
 
 ---
 
@@ -930,6 +931,15 @@ Ventes
 Stock
 Clients
 Menu
+```
+
+Les entrées Commerce secondaires doivent rester accessibles depuis Menu ou la page Commerce :
+
+```txt
+Achats
+Fournisseurs
+Réception stock
+Stock bas
 ```
 
 Pour Santé :

@@ -107,6 +107,7 @@ DESIGN.md
 docs/SYNKRO_V2_REBUILD_PLAN.md
 docs/SYNKRO_BUSINESS_MODULES_ARCHITECTURE.md
 docs/SYNKRO_CURRENT_STATE_AUDIT.md
+docs/SYNKRO_SECTOR_DASHBOARD_SPEC.md
 docs/SYNKRO_ACTIVE_PRODUCT_MIGRATION_RULES.md
 docs/SYNKRO_DESIGN_SYSTEM_V2.md
 docs/SYNKRO_UI_COMPONENTS_SPEC.md
@@ -384,6 +385,8 @@ Continuer comme dépense
 Le dashboard ne doit pas être générique.
 
 Il doit s’adapter au secteur.
+
+Avant de modifier le dashboard, lire `docs/SYNKRO_SECTOR_DASHBOARD_SPEC.md`.
 
 ### Commerce
 

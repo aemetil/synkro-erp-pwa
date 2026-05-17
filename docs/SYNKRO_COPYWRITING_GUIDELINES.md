@@ -2,6 +2,7 @@
 
 > Direction : **clair, calme, professionnel, humain**  
 > Objectif : définir le langage produit de Synkro v2 pour renforcer la confiance, réduire la confusion et accompagner les utilisateurs non techniques.
+> Références métier : `docs/SYNKRO_BUSINESS_MODULES_ARCHITECTURE.md`, `docs/SYNKRO_CURRENT_STATE_AUDIT.md` et `docs/SYNKRO_SECTOR_DASHBOARD_SPEC.md`.
 
 ---
 
@@ -203,7 +204,7 @@ Révolutionnez votre business avec Synkro !
 Bon :
 
 ```txt
-Suivez vos ventes, dépenses et paiements plus simplement.
+Suivez vos ventes, encaissements et dépenses opérationnelles plus simplement.
 ```
 
 ---
@@ -231,22 +232,30 @@ Le français doit rester accessible.
 
 ## 8. Vocabulaire produit recommandé
 
-| Concept           | Terme recommandé |
-| ----------------- | ---------------- |
-| Dashboard         | Tableau de bord  |
-| Sales             | Ventes           |
-| Expenses          | Dépenses         |
-| Reports           | Rapports         |
-| Customers         | Clients          |
-| Products          | Produits         |
-| Stock             | Stock            |
-| Payment           | Paiement         |
-| Partial payment   | Paiement partiel |
-| Remaining balance | Reste à payer    |
-| Paid              | Payé             |
-| Unpaid            | Impayé           |
-| Overdue           | En retard        |
-| Receipt           | Reçu             |
+| Concept              | Terme recommandé          |
+| -------------------- | ------------------------- |
+| Dashboard            | Tableau de bord           |
+| Sales                | Ventes                    |
+| Operational expenses | Dépenses opérationnelles  |
+| Purchases            | Achats                    |
+| Suppliers            | Fournisseurs              |
+| Reports              | Rapports                  |
+| Customers            | Clients                   |
+| Products             | Produits                  |
+| Stock                | Stock                     |
+| Stock reception      | Réception stock           |
+| Low stock            | Stock bas                 |
+| Payment              | Paiement                  |
+| Partial payment      | Paiement partiel          |
+| Pending payment      | Paiement en attente       |
+| Cash received        | Encaissements             |
+| Accounts receivable  | Créances clients          |
+| Supplier debt        | Dettes fournisseurs       |
+| Remaining balance    | Reste à payer             |
+| Paid                 | Payé                      |
+| Unpaid               | Impayé                    |
+| Overdue              | En retard                 |
+| Receipt              | Reçu                      |
 | Invoice           | Facture          |
 | Settings          | Paramètres       |
 | Users             | Utilisateurs     |
@@ -364,14 +373,14 @@ Gérez vos ventes, paiements et reçus.
 
 ```txt
 Finance
-Suivez vos ventes, dépenses et encaissements.
+Suivez vos ventes, encaissements et dépenses opérationnelles.
 ```
 
 #### Commerce
 
 ```txt
 Commerce
-Gérez vos produits, stock et alertes.
+Gérez vos produits, Achats, Fournisseurs et stock.
 ```
 
 #### Clients
@@ -439,7 +448,7 @@ Les clients apparaîtront ici quand vous enregistrerez des ventes.
 
 ```txt
 Pas encore assez de données.
-Ajoutez quelques ventes et dépenses pour générer vos premiers rapports.
+Ajoutez quelques ventes et dépenses opérationnelles pour générer vos premiers rapports.
 [ Nouvelle vente ]
 ```
 
@@ -800,7 +809,23 @@ Vos dépenses du mois sont de 4 500 G.
 ```
 
 ```txt
+Vos achats de stock du mois sont de 8 000 G.
+```
+
+```txt
 Votre bénéfice estimé est de 7 500 G.
+```
+
+À éviter :
+
+```txt
+Vos achats de stock sont des dépenses.
+```
+
+Préférer :
+
+```txt
+Vos dépenses opérationnelles sont séparées de vos achats de stock.
 ```
 
 ### 18.2 Éviter
@@ -842,7 +867,7 @@ Cela permet à Synkro d’afficher les bons outils dès le départ.
 
 ```txt
 Quelle devise utilisez-vous le plus souvent ?
-Elle sera utilisée pour vos ventes, dépenses et rapports.
+Elle sera utilisée pour vos ventes, encaissements, dépenses opérationnelles et rapports.
 ```
 
 ### 19.5 Première vente
@@ -1149,7 +1174,7 @@ Invitez un employé pour l’aider à utiliser Synkro avec les bons accès.
 ### 27.1 Devise
 
 ```txt
-Cette devise sera utilisée pour afficher vos ventes, dépenses et rapports.
+Cette devise sera utilisée pour afficher vos ventes, encaissements, dépenses opérationnelles et rapports.
 ```
 
 ### 27.2 Stock bas

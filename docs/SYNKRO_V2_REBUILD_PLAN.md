@@ -4,6 +4,7 @@
 > Direction validée : **monochrome fonctionnel**  
 > Accent principal : `#1F3A5F`  
 > Objectif : transformer Synkro d’un MVP fonctionnel en un produit mature, fiable, mobile-first et profondément adapté au marché haïtien des PME.
+> Références métier : `docs/SYNKRO_BUSINESS_MODULES_ARCHITECTURE.md`, `docs/SYNKRO_CURRENT_STATE_AUDIT.md` et `docs/SYNKRO_SECTOR_DASHBOARD_SPEC.md`.
 
 ---
 
@@ -55,9 +56,11 @@ Le produit doit réduire la charge mentale.
 Il doit aider l’utilisateur à répondre rapidement à des questions simples :
 
 - Combien ai-je vendu ?
+- Combien ai-je réellement encaissé ?
 - Qui me doit de l’argent ?
 - Quels produits sont presque terminés ?
-- Combien ai-je dépensé ?
+- Combien ai-je dépensé pour faire fonctionner l’entreprise ?
+- Combien ai-je acheté en marchandises ?
 - Est-ce que mon business va bien ?
 - Puis-je remettre une preuve propre à mon client ?
 - Qui a fait quoi dans l’entreprise ?
@@ -690,7 +693,17 @@ Sur mobile, cela devient vite lourd.
 
 ### Objectif v2
 
-Transformer le dashboard en page de pilotage simple.
+Transformer le dashboard en page de pilotage simple et sectorielle.
+
+Le dashboard doit respecter `docs/SYNKRO_BUSINESS_MODULES_ARCHITECTURE.md` et la référence détaillée `docs/SYNKRO_SECTOR_DASHBOARD_SPEC.md` :
+
+```txt
+Commerce dashboard
+Santé dashboard
+Autre dashboard
+```
+
+Il ne doit pas afficher les mêmes priorités à une boutique, un cabinet médical et une entreprise de services.
 
 ### Priorité d’information
 
@@ -717,7 +730,7 @@ Bonjour Sylvain
 
 Aujourd’hui
 Entrées : 12 500 G
-Sorties : 2 000 G
+Sorties opérationnelles : 2 000 G
 Solde : 10 500 G
 
 À suivre
@@ -761,7 +774,7 @@ Faire de la vente le flow le plus rapide et le plus fiable de Synkro.
 
 ### Objectif
 
-Donner une vision claire des entrées, sorties et bénéfice.
+Donner une vision claire des ventes émises, des encaissements reçus, des sorties et du bénéfice estimé.
 
 ### Problème actuel
 
@@ -770,12 +783,18 @@ La page est fonctionnelle mais encore trop “dashboard”.
 ### Améliorations v2
 
 - réduire les cartes ;
-- clarifier bénéfice ;
-- mieux distinguer ventes et dépenses ;
-- rendre les dépenses plus faciles à gérer ;
-- créer page complète dépenses ;
+- clarifier bénéfice estimé ;
+- distinguer ventes émises et encaissements reçus ;
+- distinguer dépenses opérationnelles et achats de stock ;
+- afficher créances clients et dettes fournisseurs ;
+- rendre les dépenses opérationnelles plus faciles à gérer ;
+- créer page complète Dépenses opérationnelles ;
 - préparer export PDF / CSV ;
 - montrer les anomalies.
+
+Finance ne doit pas faire croire que tous les achats de stock sont de simples dépenses. Les achats de marchandises et la réception stock appartiennent d’abord à Commerce, puis alimentent Finance comme achats de stock, dettes fournisseurs ou cash sorti.
+
+Synkro doit rester un outil de gestion simple. Ces distinctions servent à éviter les chiffres trompeurs, pas à transformer Synkro en logiciel comptable complet.
 
 ---
 
@@ -783,7 +802,7 @@ La page est fonctionnelle mais encore trop “dashboard”.
 
 ### Objectif
 
-Devenir le centre opérationnel pour produits, stock et approvisionnement.
+Devenir le centre opérationnel pour produits, stock, achats et fournisseurs.
 
 ### Problèmes observés
 
@@ -794,12 +813,16 @@ Devenir le centre opérationnel pour produits, stock et approvisionnement.
 ### Améliorations v2
 
 - action principale visible en haut ;
+- section Achats claire ;
+- section Fournisseurs claire ;
 - bouton “Réception stock” à prévoir ;
 - alertes stock plus visibles ;
 - page produit détail claire ;
 - historique stock lisible ;
 - distinction entre ajustement manuel et réception fournisseur ;
 - éviter les actions cachées en bas.
+
+Achats signifie ici achats de marchandises destinées au stock ou à la revente. Ce n’est pas la même chose que Dépenses opérationnelles.
 
 ---
 
@@ -848,8 +871,11 @@ La page utilise encore beaucoup de tableaux et de barres.
 Exemple :
 
 ```txt
-En mai, votre business a généré 715 G de ventes et 200 G de dépenses.
-Votre bénéfice estimé est de 515 G.
+En mai, votre business a généré 715 G de ventes émises.
+Vous avez reçu 620 G en encaissements.
+Vos dépenses opérationnelles sont de 200 G.
+Vos achats de stock sont de 300 G.
+Votre bénéfice estimé doit être lu séparément du cash sorti pour acheter du stock.
 ```
 
 ---
@@ -1045,10 +1071,12 @@ app/(dashboard)/dashboard/page.tsx
 app/(dashboard)/sales/**
 app/(dashboard)/finance/**
 app/(dashboard)/commerce/**
-app/(dashboard)/clients/**
+app/(dashboard)/customers/**
 app/(dashboard)/reports/**
 app/(dashboard)/settings/**
 ```
+
+Note route : le label utilisateur reste “Clients”, mais la route active `/customers` doit être préservée tant qu’un plan de migration n’existe pas.
 
 ---
 

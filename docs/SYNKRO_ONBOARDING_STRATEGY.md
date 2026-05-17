@@ -304,6 +304,8 @@ Règle :
 
 > Le secteur choisi doit adapter l’interface dès le départ.
 
+Le dashboard affiché après onboarding doit suivre `docs/SYNKRO_SECTOR_DASHBOARD_SPEC.md`.
+
 ---
 
 ### Étape 4 — Devise
@@ -867,6 +869,8 @@ La prochaine étape : générer un reçu professionnel pour votre client.
 ## 22. Onboarding checklist après connexion
 
 Après l’onboarding initial, afficher une checklist discrète sur le dashboard jusqu’à activation.
+
+La checklist doit rester cohérente avec le dashboard sectoriel décrit dans `docs/SYNKRO_SECTOR_DASHBOARD_SPEC.md`.
 
 Exemple :
 

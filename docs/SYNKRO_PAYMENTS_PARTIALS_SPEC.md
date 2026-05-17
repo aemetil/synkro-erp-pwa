@@ -2,6 +2,7 @@
 
 > Direction : **paiements traçables, dettes claires, reçus professionnels**  
 > Objectif : remplacer la logique binaire payé / impayé par un système fiable de paiements complets, partiels et soldes restants.
+> Références métier : `docs/SYNKRO_BUSINESS_MODULES_ARCHITECTURE.md`, `docs/SYNKRO_CURRENT_STATE_AUDIT.md` et `docs/SYNKRO_SECTOR_DASHBOARD_SPEC.md`.
 
 ---
 
@@ -545,6 +546,8 @@ Payés
 
 Le dashboard doit afficher les dettes comme un signal important.
 
+Pour l’ordre des widgets selon Commerce, Santé ou Autre, suivre `docs/SYNKRO_SECTOR_DASHBOARD_SPEC.md`.
+
 Widgets possibles :
 
 ```txt
@@ -568,9 +571,13 @@ Total dû : 4 700 G
 
 La page finance doit distinguer :
 
-- ventes totales ;
-- paiements réellement reçus ;
-- créances restantes.
+- ventes émises ;
+- encaissements réellement reçus ;
+- dépenses opérationnelles ;
+- achats de stock ;
+- créances clients ;
+- dettes fournisseurs ;
+- bénéfice estimé.
 
 Important :
 
@@ -585,13 +592,14 @@ Afficher deux notions :
 ```txt
 Chiffre d’affaires
 Encaissements reçus
+Créances clients
 ```
 
 Exemple :
 
 ```txt
 Ventes émises : 20 000 G
-Paiements reçus : 15 000 G
+Encaissements reçus : 15 000 G
 Reste à encaisser : 5 000 G
 ```
 
@@ -613,8 +621,10 @@ Rapport mensuel recommandé :
 ```txt
 Ventes du mois
 Encaissements reçus
-Créances ouvertes
-Dépenses
+Créances clients
+Dépenses opérationnelles
+Achats de stock
+Dettes fournisseurs
 Bénéfice estimé
 ```
 

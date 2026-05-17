@@ -254,6 +254,8 @@ Pour un utilisateur, cela peut créer une impression de flou.
 
 Le dashboard doit devenir sectoriel.
 
+La référence détaillée de conception et de priorisation est `docs/SYNKRO_SECTOR_DASHBOARD_SPEC.md`.
+
 ### Commerce
 
 Priorités :
