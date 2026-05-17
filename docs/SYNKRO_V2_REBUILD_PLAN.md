@@ -1,8 +1,3 @@
-Oui, on lance.
-
-Voici une première version structurée du document **`SYNKRO_V2_REBUILD_PLAN.md`**, prête à copier dans ton repo.
-
-````md
 # Synkro v2 — Rebuild Plan
 
 > Version de travail initiale  
@@ -96,6 +91,7 @@ L’accent principal validé est :
 ```css
 #1F3A5F
 ```
+
 ````
 
 Cette couleur doit représenter :
@@ -1304,3 +1300,4 @@ Toutes les décisions produit, design et code doivent être guidées par cette p
 Si la réponse est non, il faut simplifier.
 
 ---
+````
